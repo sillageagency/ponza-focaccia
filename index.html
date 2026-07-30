@@ -12,17 +12,22 @@
   :root{
     --green:#0f5c2e; --green-deep:#0a4322; --cream:#f6f1df;
     --cream-card:#fbf8ee; --ink:#123a24; --muted:#4a6b54;
+    /* pile de polices : Poppins pour le latin, puis polices systeme
+       qui couvrent le cyrillique et les caracteres CJK (japonais / chinois) */
+    --stack:'Poppins','Hiragino Sans','Hiragino Kaku Gothic ProN','Yu Gothic','Noto Sans JP',
+            'PingFang SC','Microsoft YaHei','Noto Sans SC','Noto Sans',system-ui,-apple-system,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}
-  body{font-family:'Poppins',system-ui,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5;padding-bottom:60px;}
-  header{background:var(--green);color:var(--cream);text-align:center;padding:30px 20px 22px;border-bottom:5px solid var(--green-deep);}
+  body{font-family:var(--stack);background:var(--cream);color:var(--ink);line-height:1.5;padding-bottom:60px;}
+  header{background:var(--green);color:var(--cream);text-align:center;padding:30px 20px 20px;border-bottom:5px solid var(--green-deep);}
   header .brand{font-family:'Pacifico',cursive;font-size:2.6rem;line-height:1.05;letter-spacing:.5px;}
   header .wave{width:120px;height:14px;margin:12px auto 8px;display:block;}
   header .slogan{font-family:'Pacifico',cursive;font-size:1.15rem;opacity:.9;transform:rotate(-4deg);display:inline-block;margin-top:4px;}
-  .langbar{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px;}
-  .langbar button{font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;background:transparent;color:var(--cream);border:1.5px solid rgba(246,241,223,.4);border-radius:999px;padding:5px 11px;display:flex;align-items:center;gap:5px;transition:.15s;}
-  .langbar button .flag{font-size:1rem;line-height:1;}
+  /* selecteur de langue : 8 langues, boutons compacts */
+  .langbar{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin-top:16px;max-width:420px;margin-left:auto;margin-right:auto;}
+  .langbar button{font-family:var(--stack);font-size:.75rem;font-weight:600;cursor:pointer;background:transparent;color:var(--cream);border:1.5px solid rgba(246,241,223,.4);border-radius:999px;padding:5px 10px;display:flex;align-items:center;gap:4px;transition:.15s;}
+  .langbar button .flag{font-size:.95rem;line-height:1;}
   .langbar button.active{background:var(--cream);color:var(--green-deep);border-color:var(--cream);}
   nav{position:sticky;top:0;z-index:20;background:var(--green-deep);display:flex;gap:6px;overflow-x:auto;padding:10px 12px;scrollbar-width:none;box-shadow:0 3px 10px rgba(0,0,0,.15);}
   nav::-webkit-scrollbar{display:none;}
@@ -48,6 +53,17 @@
   footer .big{font-family:'Pacifico',cursive;color:var(--green);font-size:1.8rem;transform:rotate(-3deg);display:inline-block;}
   footer p{margin-top:10px;font-size:.8rem;}
   .top-link{display:block;text-align:center;margin:18px auto 0;color:var(--green);font-size:.8rem;text-decoration:none;font-weight:600;}
+
+  /* --- Pacifico ne contient ni cyrillique ni CJK : on bascule les titres
+         traduits sur la pile systeme pour RU / JA / ZH --- */
+  html[data-script="nonlatin"] .sec-title{
+    font-family:var(--stack);font-weight:700;font-size:1.55rem;letter-spacing:.2px;
+  }
+  html[data-script="nonlatin"] .compose-card h3{
+    font-family:var(--stack);font-weight:700;font-size:1.02rem;
+  }
+  html[data-script="nonlatin"] .compose-price{font-family:var(--stack);font-weight:700;font-size:1.35rem;}
+  html[data-script="nonlatin"] .sec-sub{font-style:normal;}
 </style>
 </head>
 <body>
@@ -77,113 +93,274 @@ const LANGS = [
   {code:"en", flag:"🇬🇧", label:"EN"},
   {code:"it", flag:"🇮🇹", label:"IT"},
   {code:"de", flag:"🇩🇪", label:"DE"},
-  {code:"es", flag:"🇪🇸", label:"ES"}
+  {code:"es", flag:"🇪🇸", label:"ES"},
+  {code:"ru", flag:"🇷🇺", label:"RU"},
+  {code:"ja", flag:"🇯🇵", label:"日本語"},
+  {code:"zh", flag:"🇨🇳", label:"中文"}
 ];
+const NONLATIN = ["ru","ja","zh"];
 
 const UI = {
-  backTop:{fr:"↑ Retour en haut",en:"↑ Back to top",it:"↑ Torna su",de:"↑ Nach oben",es:"↑ Volver arriba"},
-  footer:{fr:"Ponza Focaccia · Prix en euros, taxes comprises",en:"Ponza Focaccia · Prices in euros, taxes included",it:"Ponza Focaccia · Prezzi in euro, tasse incluse",de:"Ponza Focaccia · Preise in Euro, inkl. Steuern",es:"Ponza Focaccia · Precios en euros, impuestos incluidos"}
+  backTop:{fr:"↑ Retour en haut",en:"↑ Back to top",it:"↑ Torna su",de:"↑ Nach oben",es:"↑ Volver arriba",
+           ru:"↑ Наверх",ja:"↑ トップへ戻る",zh:"↑ 返回顶部"},
+  footer:{fr:"Ponza Focaccia · Prix en euros, taxes comprises",
+          en:"Ponza Focaccia · Prices in euros, taxes included",
+          it:"Ponza Focaccia · Prezzi in euro, tasse incluse",
+          de:"Ponza Focaccia · Preise in Euro, inkl. Steuern",
+          es:"Ponza Focaccia · Precios en euros, impuestos incluidos",
+          ru:"Ponza Focaccia · Цены в евро, налоги включены",
+          ja:"Ponza Focaccia · 価格はユーロ表示・税込",
+          zh:"Ponza Focaccia · 价格以欧元计，含税"}
 };
 
 const SECTIONS = [
   {
     id:"focaccias",
-    nav:{fr:"Focaccias",en:"Focaccias",it:"Focacce",de:"Focacce",es:"Focaccias"},
-    title:{fr:"Nos Focaccias",en:"Our Focaccias",it:"Le nostre Focacce",de:"Unsere Focacce",es:"Nuestras Focaccias"},
-    sub:{fr:"La signature de la maison",en:"The house signature",it:"La specialità della casa",de:"Das Aushängeschild des Hauses",es:"La especialidad de la casa"},
+    nav:{fr:"Focaccias",en:"Focaccias",it:"Focacce",de:"Focacce",es:"Focaccias",ru:"Фокаччи",ja:"フォカッチャ",zh:"佛卡夏"},
+    title:{fr:"Nos Focaccias",en:"Our Focaccias",it:"Le nostre Focacce",de:"Unsere Focacce",es:"Nuestras Focaccias",
+           ru:"Наши фокаччи",ja:"フォカッチャ",zh:"我们的佛卡夏"},
+    sub:{fr:"La signature de la maison",en:"The house signature",it:"La specialità della casa",de:"Das Aushängeschild des Hauses",es:"La especialidad de la casa",
+         ru:"Специалитет заведения",ja:"当店のスペシャリテ",zh:"本店招牌"},
     items:[
-      {n:"Parma",p:"10,90 €",d:{fr:"Jambon cru, mozzarella di buffala, tomates confites, crème de balsamique",en:"Cured ham, buffalo mozzarella, candied tomatoes, balsamic cream",it:"Prosciutto crudo, mozzarella di bufala, pomodori confit, crema di balsamico",de:"Rohschinken, Büffelmozzarella, kandierte Tomaten, Balsamico-Creme",es:"Jamón curado, mozzarella de búfala, tomates confitados, crema de balsámico"}},
-      {n:"Caprese",p:"9,90 €",d:{fr:"Tomates, mozzarella di buffala, pesto, roquette, crème de balsamique",en:"Tomatoes, buffalo mozzarella, pesto, rocket, balsamic cream",it:"Pomodori, mozzarella di bufala, pesto, rucola, crema di balsamico",de:"Tomaten, Büffelmozzarella, Pesto, Rucola, Balsamico-Creme",es:"Tomates, mozzarella de búfala, pesto, rúcula, crema de balsámico"}},
-      {n:"Pistachio",p:"13,90 €",d:{fr:"Mortadella, stracciatella, pesto de pistaches, éclats de pistache, roquette",en:"Mortadella, stracciatella, pistachio pesto, pistachio pieces, rocket",it:"Mortadella, stracciatella, pesto di pistacchio, granella di pistacchio, rucola",de:"Mortadella, Stracciatella, Pistazienpesto, Pistazienstückchen, Rucola",es:"Mortadela, stracciatella, pesto de pistacho, trocitos de pistacho, rúcula"}},
-      {n:"Tartufo",p:"14,90 €",d:{fr:"Jambon cuit, mozzarella di buffala, crème de truffe, roquette",en:"Cooked ham, buffalo mozzarella, truffle cream, rocket",it:"Prosciutto cotto, mozzarella di bufala, crema di tartufo, rucola",de:"Kochschinken, Büffelmozzarella, Trüffelcreme, Rucola",es:"Jamón cocido, mozzarella de búfala, crema de trufa, rúcula"}},
-      {n:"Porchetta",p:"13,90 €",d:{fr:"Porchetta, taleggio, pesto rosso, roquette",en:"Porchetta, taleggio, red pesto, rocket",it:"Porchetta, taleggio, pesto rosso, rucola",de:"Porchetta, Taleggio, rotes Pesto, Rucola",es:"Porchetta, taleggio, pesto rojo, rúcula"}},
-      {n:"Bonifazinca",p:"12,90 €",d:{fr:"Aubergine à la bonifacienne, provolone, coulis de tomate, basilic",en:"Bonifacio-style aubergine, provolone, tomato coulis, basil",it:"Melanzana alla bonifacina, provolone, coulis di pomodoro, basilico",de:"Aubergine nach Bonifacio-Art, Provolone, Tomaten-Coulis, Basilikum",es:"Berenjena al estilo de Bonifacio, provolone, coulis de tomate, albahaca"}},
-      {n:"Ortu",p:"11,90 €",d:{fr:"Légumes confits (courgettes, aubergines), provolone, pesto rosso, roquette, crème de balsamique",en:"Candied vegetables (courgettes, aubergines), provolone, red pesto, rocket, balsamic cream",it:"Verdure confit (zucchine, melanzane), provolone, pesto rosso, rucola, crema di balsamico",de:"Kandiertes Gemüse (Zucchini, Auberginen), Provolone, rotes Pesto, Rucola, Balsamico-Creme",es:"Verduras confitadas (calabacín, berenjena), provolone, pesto rojo, rúcula, crema de balsámico"}},
-      {n:"Inferno",p:"12,90 €",d:{fr:"Spianata piccante, mozzarella di buffala, nduja, poivrons grillés, roquette",en:"Spicy spianata, buffalo mozzarella, nduja, grilled peppers, rocket",it:"Spianata piccante, mozzarella di bufala, nduja, peperoni grigliati, rucola",de:"Scharfe Spianata, Büffelmozzarella, Nduja, gegrillte Paprika, Rucola",es:"Spianata picante, mozzarella de búfala, nduja, pimientos asados, rúcula"}},
-      {n:"Carciofo",p:"13,90 €",d:{fr:"Coppa, crème d'artichauts, taleggio, roquette, crème de balsamique",en:"Coppa, artichoke cream, taleggio, rocket, balsamic cream",it:"Coppa, crema di carciofi, taleggio, rucola, crema di balsamico",de:"Coppa, Artischockencreme, Taleggio, Rucola, Balsamico-Creme",es:"Coppa, crema de alcachofa, taleggio, rúcula, crema de balsámico"}},
-      {n:"Cotto",p:"11,90 €",d:{fr:"Jambon cuit, stracciatella, pesto verde, roquette, crème de balsamique",en:"Cooked ham, stracciatella, green pesto, rocket, balsamic cream",it:"Prosciutto cotto, stracciatella, pesto verde, rucola, crema di balsamico",de:"Kochschinken, Stracciatella, grünes Pesto, Rucola, Balsamico-Creme",es:"Jamón cocido, stracciatella, pesto verde, rúcula, crema de balsámico"}}
+      {n:"Parma",p:"10,90 €",d:{
+        fr:"Jambon cru, mozzarella di buffala, tomates confites, crème de balsamique",
+        en:"Cured ham, buffalo mozzarella, candied tomatoes, balsamic cream",
+        it:"Prosciutto crudo, mozzarella di bufala, pomodori confit, crema di balsamico",
+        de:"Rohschinken, Büffelmozzarella, kandierte Tomaten, Balsamico-Creme",
+        es:"Jamón curado, mozzarella de búfala, tomates confitados, crema de balsámico",
+        ru:"Сыровяленый окорок, моцарелла из молока буйволицы, томаты конфи, бальзамический крем",
+        ja:"生ハム、水牛モッツァレラ、トマトのコンフィ、バルサミコクリーム",
+        zh:"生火腿、水牛马苏里拉、油封番茄、香醋酱"}},
+      {n:"Caprese",p:"9,90 €",d:{
+        fr:"Tomates, mozzarella di buffala, pesto, roquette, crème de balsamique",
+        en:"Tomatoes, buffalo mozzarella, pesto, rocket, balsamic cream",
+        it:"Pomodori, mozzarella di bufala, pesto, rucola, crema di balsamico",
+        de:"Tomaten, Büffelmozzarella, Pesto, Rucola, Balsamico-Creme",
+        es:"Tomates, mozzarella de búfala, pesto, rúcula, crema de balsámico",
+        ru:"Томаты, моцарелла из молока буйволицы, песто, руккола, бальзамический крем",
+        ja:"トマト、水牛モッツァレラ、ペスト、ルッコラ、バルサミコクリーム",
+        zh:"番茄、水牛马苏里拉、罗勒青酱、芝麻菜、香醋酱"}},
+      {n:"Pistachio",p:"13,90 €",d:{
+        fr:"Mortadella, stracciatella, pesto de pistaches, éclats de pistache, roquette",
+        en:"Mortadella, stracciatella, pistachio pesto, pistachio pieces, rocket",
+        it:"Mortadella, stracciatella, pesto di pistacchio, granella di pistacchio, rucola",
+        de:"Mortadella, Stracciatella, Pistazienpesto, Pistazienstückchen, Rucola",
+        es:"Mortadela, stracciatella, pesto de pistacho, trocitos de pistacho, rúcula",
+        ru:"Мортаделла, страчателла, песто из фисташек, кусочки фисташек, руккола",
+        ja:"モルタデッラ、ストラッチャテッラ、ピスタチオペースト、砕きピスタチオ、ルッコラ",
+        zh:"摩泰台拉香肠、斯特拉奇亚泰拉奶酪、开心果酱、开心果碎、芝麻菜"}},
+      {n:"Tartufo",p:"14,90 €",d:{
+        fr:"Jambon cuit, mozzarella di buffala, crème de truffe, roquette",
+        en:"Cooked ham, buffalo mozzarella, truffle cream, rocket",
+        it:"Prosciutto cotto, mozzarella di bufala, crema di tartufo, rucola",
+        de:"Kochschinken, Büffelmozzarella, Trüffelcreme, Rucola",
+        es:"Jamón cocido, mozzarella de búfala, crema de trufa, rúcula",
+        ru:"Варёный окорок, моцарелла из молока буйволицы, трюфельный крем, руккола",
+        ja:"ハム、水牛モッツァレラ、トリュフクリーム、ルッコラ",
+        zh:"熟火腿、水牛马苏里拉、松露酱、芝麻菜"}},
+      {n:"Porchetta",p:"13,90 €",d:{
+        fr:"Porchetta, taleggio, pesto rosso, roquette",
+        en:"Porchetta, taleggio, red pesto, rocket",
+        it:"Porchetta, taleggio, pesto rosso, rucola",
+        de:"Porchetta, Taleggio, rotes Pesto, Rucola",
+        es:"Porchetta, taleggio, pesto rojo, rúcula",
+        ru:"Порчетта, таледжо, красное песто, руккола",
+        ja:"ポルケッタ、タレッジョ、赤ペスト、ルッコラ",
+        zh:"意式烤猪肉卷、塔雷吉欧奶酪、红罗勒酱、芝麻菜"}},
+      {n:"Bonifazinca",p:"12,90 €",d:{
+        fr:"Aubergine à la bonifacienne, provolone, coulis de tomate, basilic",
+        en:"Bonifacio-style aubergine, provolone, tomato coulis, basil",
+        it:"Melanzana alla bonifacina, provolone, coulis di pomodoro, basilico",
+        de:"Aubergine nach Bonifacio-Art, Provolone, Tomaten-Coulis, Basilikum",
+        es:"Berenjena al estilo de Bonifacio, provolone, coulis de tomate, albahaca",
+        ru:"Баклажан по-бонифачски, проволоне, томатный соус, базилик",
+        ja:"ボニファシオ風ナス、プロヴォローネ、トマトソース、バジル",
+        zh:"博尼法乔风味茄子、波萝伏洛奶酪、番茄酱汁、罗勒"}},
+      {n:"Ortu",p:"11,90 €",d:{
+        fr:"Légumes confits (courgettes, aubergines), provolone, pesto rosso, roquette, crème de balsamique",
+        en:"Candied vegetables (courgettes, aubergines), provolone, red pesto, rocket, balsamic cream",
+        it:"Verdure confit (zucchine, melanzane), provolone, pesto rosso, rucola, crema di balsamico",
+        de:"Kandiertes Gemüse (Zucchini, Auberginen), Provolone, rotes Pesto, Rucola, Balsamico-Creme",
+        es:"Verduras confitadas (calabacín, berenjena), provolone, pesto rojo, rúcula, crema de balsámico",
+        ru:"Овощи конфи (кабачки, баклажаны), проволоне, красное песто, руккола, бальзамический крем",
+        ja:"野菜のコンフィ（ズッキーニ・ナス）、プロヴォローネ、赤ペスト、ルッコラ、バルサミコクリーム",
+        zh:"油封蔬菜（西葫芦、茄子）、波萝伏洛奶酪、红罗勒酱、芝麻菜、香醋酱"}},
+      {n:"Inferno",p:"12,90 €",d:{
+        fr:"Spianata piccante, mozzarella di buffala, nduja, poivrons grillés, roquette",
+        en:"Spicy spianata, buffalo mozzarella, nduja, grilled peppers, rocket",
+        it:"Spianata piccante, mozzarella di bufala, nduja, peperoni grigliati, rucola",
+        de:"Scharfe Spianata, Büffelmozzarella, Nduja, gegrillte Paprika, Rucola",
+        es:"Spianata picante, mozzarella de búfala, nduja, pimientos asados, rúcula",
+        ru:"Острая спьяната, моцарелла из молока буйволицы, ндуйя, жареный перец, руккола",
+        ja:"スピアナータ・ピッカンテ（辛口サラミ）、水牛モッツァレラ、ンドゥイヤ、焼きパプリカ、ルッコラ",
+        zh:"辣味萨拉米、水牛马苏里拉、恩杜亚辣香肠、烤甜椒、芝麻菜"}},
+      {n:"Carciofo",p:"13,90 €",d:{
+        fr:"Coppa, crème d'artichauts, taleggio, roquette, crème de balsamique",
+        en:"Coppa, artichoke cream, taleggio, rocket, balsamic cream",
+        it:"Coppa, crema di carciofi, taleggio, rucola, crema di balsamico",
+        de:"Coppa, Artischockencreme, Taleggio, Rucola, Balsamico-Creme",
+        es:"Coppa, crema de alcachofa, taleggio, rúcula, crema de balsámico",
+        ru:"Коппа, крем из артишоков, таледжо, руккола, бальзамический крем",
+        ja:"コッパ、アーティチョーククリーム、タレッジョ、ルッコラ、バルサミコクリーム",
+        zh:"科帕火腿、朝鲜蓟酱、塔雷吉欧奶酪、芝麻菜、香醋酱"}},
+      {n:"Cotto",p:"11,90 €",d:{
+        fr:"Jambon cuit, stracciatella, pesto verde, roquette, crème de balsamique",
+        en:"Cooked ham, stracciatella, green pesto, rocket, balsamic cream",
+        it:"Prosciutto cotto, stracciatella, pesto verde, rucola, crema di balsamico",
+        de:"Kochschinken, Stracciatella, grünes Pesto, Rucola, Balsamico-Creme",
+        es:"Jamón cocido, stracciatella, pesto verde, rúcula, crema de balsámico",
+        ru:"Варёный окорок, страчателла, зелёное песто, руккола, бальзамический крем",
+        ja:"ハム、ストラッチャテッラ、緑のペスト、ルッコラ、バルサミコクリーム",
+        zh:"熟火腿、斯特拉奇亚泰拉奶酪、绿罗勒酱、芝麻菜、香醋酱"}}
     ]
   },
   {
     id:"compose",
-    nav:{fr:"Compose ta Focaccia",en:"Build Your Own",it:"Componi la tua",de:"Selbst gestalten",es:"Crea la tuya"},
-    title:{fr:"Compose ta Focaccia !",en:"Build Your Own Focaccia!",it:"Componi la tua Focaccia!",de:"Stelle deine Focaccia zusammen!",es:"¡Crea tu Focaccia!"},
+    nav:{fr:"Compose ta Focaccia",en:"Build Your Own",it:"Componi la tua",de:"Selbst gestalten",es:"Crea la tuya",
+         ru:"Своя фокачча",ja:"オリジナル",zh:"自选佛卡夏"},
+    title:{fr:"Compose ta Focaccia !",en:"Build Your Own Focaccia!",it:"Componi la tua Focaccia!",de:"Stelle deine Focaccia zusammen!",es:"¡Crea tu Focaccia!",
+           ru:"Собери свою фокаччу!",ja:"オリジナルフォカッチャを作ろう！",zh:"自选你的佛卡夏！"},
     price:"14,90 €",
     cards:[
-      {h:{fr:"1 Crème",en:"1 Cream",it:"1 Crema",de:"1 Creme",es:"1 Crema"},p:{fr:"Pesto · Pesto rosso · Pesto de pistache · Crème d'artichauts · Crème de truffe (+1 €) · Nduja",en:"Pesto · Red pesto · Pistachio pesto · Artichoke cream · Truffle cream (+1 €) · Nduja",it:"Pesto · Pesto rosso · Pesto di pistacchio · Crema di carciofi · Crema di tartufo (+1 €) · Nduja",de:"Pesto · Rotes Pesto · Pistazienpesto · Artischockencreme · Trüffelcreme (+1 €) · Nduja",es:"Pesto · Pesto rojo · Pesto de pistacho · Crema de alcachofa · Crema de trufa (+1 €) · Nduja"}},
-      {h:{fr:"1 Charcuterie",en:"1 Cured meat",it:"1 Salume",de:"1 Wurst / Schinken",es:"1 Embutido"},p:{fr:"Jambon cuit · Jambon cru · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bressaola (+1 €)",en:"Cooked ham · Cured ham · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",it:"Prosciutto cotto · Prosciutto crudo · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",de:"Kochschinken · Rohschinken · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",es:"Jamón cocido · Jamón curado · Mortadela · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)"}},
-      {h:{fr:"1 Fromage",en:"1 Cheese",it:"1 Formaggio",de:"1 Käse",es:"1 Queso"},p:{fr:"Stracciatella · Mozzarella di buffala · Provolone · Taleggio · Scarmozza",en:"Stracciatella · Buffalo mozzarella · Provolone · Taleggio · Scamorza",it:"Stracciatella · Mozzarella di bufala · Provolone · Taleggio · Scamorza",de:"Stracciatella · Büffelmozzarella · Provolone · Taleggio · Scamorza",es:"Stracciatella · Mozzarella de búfala · Provolone · Taleggio · Scamorza"}},
-      {h:{fr:"1 Légume",en:"1 Vegetable",it:"1 Verdura",de:"1 Gemüse",es:"1 Verdura"},p:{fr:"Aubergines confites · Courgettes confites · Poivrons grillés · Tomates confites · Tomates fraîches",en:"Candied aubergines · Candied courgettes · Grilled peppers · Candied tomatoes · Fresh tomatoes",it:"Melanzane confit · Zucchine confit · Peperoni grigliati · Pomodori confit · Pomodori freschi",de:"Kandierte Auberginen · Kandierte Zucchini · Gegrillte Paprika · Kandierte Tomaten · Frische Tomaten",es:"Berenjenas confitadas · Calabacines confitados · Pimientos asados · Tomates confitados · Tomates frescos"}},
-      {h:{fr:"Condiments inclus",en:"Included toppings",it:"Condimenti inclusi",de:"Inklusive Beilagen",es:"Condimentos incluidos"},p:{fr:"Basilic · Roquette · Éclats de pistaches · Éclats de noisettes · Crème balsamique",en:"Basil · Rocket · Pistachio pieces · Hazelnut pieces · Balsamic cream",it:"Basilico · Rucola · Granella di pistacchio · Granella di nocciole · Crema di balsamico",de:"Basilikum · Rucola · Pistazienstückchen · Haselnussstückchen · Balsamico-Creme",es:"Albahaca · Rúcula · Trocitos de pistacho · Trocitos de avellana · Crema de balsámico"}}
+      {h:{fr:"1 Crème",en:"1 Cream",it:"1 Crema",de:"1 Creme",es:"1 Crema",ru:"1 крем на выбор",ja:"クリーム 1種",zh:"1 种酱料"},
+       p:{fr:"Pesto · Pesto rosso · Pesto de pistache · Crème d'artichauts · Crème de truffe (+1 €) · Nduja",
+          en:"Pesto · Red pesto · Pistachio pesto · Artichoke cream · Truffle cream (+1 €) · Nduja",
+          it:"Pesto · Pesto rosso · Pesto di pistacchio · Crema di carciofi · Crema di tartufo (+1 €) · Nduja",
+          de:"Pesto · Rotes Pesto · Pistazienpesto · Artischockencreme · Trüffelcreme (+1 €) · Nduja",
+          es:"Pesto · Pesto rojo · Pesto de pistacho · Crema de alcachofa · Crema de trufa (+1 €) · Nduja",
+          ru:"Песто · Красное песто · Песто из фисташек · Крем из артишоков · Трюфельный крем (+1 €) · Ндуйя",
+          ja:"ペスト · 赤ペスト · ピスタチオペースト · アーティチョーククリーム · トリュフクリーム（+1 €） · ンドゥイヤ",
+          zh:"罗勒青酱 · 红罗勒酱 · 开心果酱 · 朝鲜蓟酱 · 松露酱（+1 €） · 恩杜亚辣香肠"}},
+      {h:{fr:"1 Charcuterie",en:"1 Cured meat",it:"1 Salume",de:"1 Wurst / Schinken",es:"1 Embutido",ru:"1 мясная нарезка",ja:"ハム・サラミ 1種",zh:"1 种肉类"},
+       p:{fr:"Jambon cuit · Jambon cru · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bressaola (+1 €)",
+          en:"Cooked ham · Cured ham · Mortadella · Porchetta · Coppa · Spianata · Bresaola (+1 €) · Nduja",
+          it:"Prosciutto cotto · Prosciutto crudo · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",
+          de:"Kochschinken · Rohschinken · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",
+          es:"Jamón cocido · Jamón curado · Mortadela · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",
+          ru:"Варёный окорок · Сыровяленый окорок · Мортаделла · Порчетта · Коппа · Спьяната · Ндуйя · Брезаола (+1 €)",
+          ja:"ハム · 生ハム · モルタデッラ · ポルケッタ · コッパ · スピアナータ · ンドゥイヤ · ブレザオラ（+1 €）",
+          zh:"熟火腿 · 生火腿 · 摩泰台拉香肠 · 意式烤猪肉卷 · 科帕火腿 · 斯皮亚纳塔萨拉米 · 恩杜亚辣香肠 · 风干牛肉（+1 €）"}},
+      {h:{fr:"1 Fromage",en:"1 Cheese",it:"1 Formaggio",de:"1 Käse",es:"1 Queso",ru:"1 сыр",ja:"チーズ 1種",zh:"1 种奶酪"},
+       p:{fr:"Stracciatella · Mozzarella di buffala · Provolone · Taleggio · Scarmozza",
+          en:"Stracciatella · Buffalo mozzarella · Provolone · Taleggio · Scamorza",
+          it:"Stracciatella · Mozzarella di bufala · Provolone · Taleggio · Scamorza",
+          de:"Stracciatella · Büffelmozzarella · Provolone · Taleggio · Scamorza",
+          es:"Stracciatella · Mozzarella de búfala · Provolone · Taleggio · Scamorza",
+          ru:"Страчателла · Моцарелла из молока буйволицы · Проволоне · Таледжо · Скаморца",
+          ja:"ストラッチャテッラ · 水牛モッツァレラ · プロヴォローネ · タレッジョ · スカモルツァ",
+          zh:"斯特拉奇亚泰拉奶酪 · 水牛马苏里拉 · 波萝伏洛奶酪 · 塔雷吉欧奶酪 · 斯卡摩扎奶酪"}},
+      {h:{fr:"1 Légume",en:"1 Vegetable",it:"1 Verdura",de:"1 Gemüse",es:"1 Verdura",ru:"1 овощ",ja:"野菜 1種",zh:"1 种蔬菜"},
+       p:{fr:"Aubergines confites · Courgettes confites · Poivrons grillés · Tomates confites · Tomates fraîches",
+          en:"Candied aubergines · Candied courgettes · Grilled peppers · Candied tomatoes · Fresh tomatoes",
+          it:"Melanzane confit · Zucchine confit · Peperoni grigliati · Pomodori confit · Pomodori freschi",
+          de:"Kandierte Auberginen · Kandierte Zucchini · Gegrillte Paprika · Kandierte Tomaten · Frische Tomaten",
+          es:"Berenjenas confitadas · Calabacines confitados · Pimientos asados · Tomates confitados · Tomates frescos",
+          ru:"Баклажаны конфи · Кабачки конфи · Жареный перец · Томаты конфи · Свежие томаты",
+          ja:"ナスのコンフィ · ズッキーニのコンフィ · 焼きパプリカ · トマトのコンフィ · フレッシュトマト",
+          zh:"油封茄子 · 油封西葫芦 · 烤甜椒 · 油封番茄 · 新鲜番茄"}},
+      {h:{fr:"Condiments inclus",en:"Included toppings",it:"Condimenti inclusi",de:"Inklusive Beilagen",es:"Condimentos incluidos",
+          ru:"Входит в состав",ja:"付属のトッピング",zh:"已含配料"},
+       p:{fr:"Basilic · Roquette · Éclats de pistaches · Éclats de noisettes · Crème balsamique",
+          en:"Basil · Rocket · Pistachio pieces · Hazelnut pieces · Balsamic cream",
+          it:"Basilico · Rucola · Granella di pistacchio · Granella di nocciole · Crema di balsamico",
+          de:"Basilikum · Rucola · Pistazienstückchen · Haselnussstückchen · Balsamico-Creme",
+          es:"Albahaca · Rúcula · Trocitos de pistacho · Trocitos de avellana · Crema de balsámico",
+          ru:"Базилик · Руккола · Кусочки фисташек · Кусочки лесного ореха · Бальзамический крем",
+          ja:"バジル · ルッコラ · 砕きピスタチオ · 砕きヘーゼルナッツ · バルサミコクリーム",
+          zh:"罗勒 · 芝麻菜 · 开心果碎 · 榛子碎 · 香醋酱"}}
     ]
   },
   {
     id:"desserts",compact:true,
-    nav:{fr:"Desserts",en:"Desserts",it:"Dolci",de:"Desserts",es:"Postres"},
-    title:{fr:"Desserts",en:"Desserts",it:"Dolci",de:"Desserts",es:"Postres"},
+    nav:{fr:"Desserts",en:"Desserts",it:"Dolci",de:"Desserts",es:"Postres",ru:"Десерты",ja:"デザート",zh:"甜点"},
+    title:{fr:"Desserts",en:"Desserts",it:"Dolci",de:"Desserts",es:"Postres",ru:"Десерты",ja:"デザート",zh:"甜点"},
     items:[
-      {n:"Tiramisu",p:"5,00 €"},
-      {n:"Pana Cotta",p:"4,50 €"},
-      {n:{fr:"Baba au Rhum",en:"Rum Baba",it:"Babà al rum",de:"Rum-Baba",es:"Babá al ron"},p:"5,50 €"},
-      {n:{fr:"Fruits frais",en:"Fresh fruit",it:"Frutta fresca",de:"Frisches Obst",es:"Fruta fresca"},p:"5,50 €",d:{fr:"Supplément Nutella +1 €",en:"Nutella extra +1 €",it:"Supplemento Nutella +1 €",de:"Nutella-Zusatz +1 €",es:"Suplemento Nutella +1 €"}},
-      {n:{fr:"Dessert du jour",en:"Dessert of the day",it:"Dolce del giorno",de:"Dessert des Tages",es:"Postre del día"},p:"5,50 €"},
-      {n:{fr:"Glace à l'italienne",en:"Italian soft ice cream",it:"Gelato all'italiana",de:"Italienisches Softeis",es:"Helado a la italiana"},p:"3,00 / 4,50 €",d:{fr:"Simple 3,00 € · Double 4,50 €",en:"Single 3,00 € · Double 4,50 €",it:"Singolo 3,00 € · Doppio 4,50 €",de:"Einfach 3,00 € · Doppelt 4,50 €",es:"Simple 3,00 € · Doble 4,50 €"}},
-      {n:"Cookies",p:"3,00 €"},
-      {n:{fr:"Cake",en:"Cake",it:"Torta",de:"Kuchen",es:"Bizcocho"},p:"3,00 €"},
-      {n:{fr:"Fondant au chocolat",en:"Chocolate fondant",it:"Tortino al cioccolato",de:"Schokoladen-Fondant",es:"Coulant de chocolate"},p:"5,50 €"},
-      {n:{fr:"Fondant au châtaigne",en:"Chestnut fondant",it:"Tortino alla castagna",de:"Kastanien-Fondant",es:"Coulant de castaña"},p:"5,50 €"}
+      {n:{fr:"Tiramisu",en:"Tiramisu",it:"Tiramisù",de:"Tiramisu",es:"Tiramisú",ru:"Тирамису",ja:"ティラミス",zh:"提拉米苏"},p:"5,00 €"},
+      {n:{fr:"Pana Cotta",en:"Panna Cotta",it:"Panna Cotta",de:"Panna Cotta",es:"Panna Cotta",ru:"Панна котта",ja:"パンナコッタ",zh:"意式奶冻"},p:"4,50 €"},
+      {n:{fr:"Baba au Rhum",en:"Rum Baba",it:"Babà al rum",de:"Rum-Baba",es:"Babá al ron",ru:"Баба с ромом",ja:"ラムババ",zh:"朗姆酒蛋糕"},p:"5,50 €"},
+      {n:{fr:"Fruits frais",en:"Fresh fruit",it:"Frutta fresca",de:"Frisches Obst",es:"Fruta fresca",ru:"Свежие фрукты",ja:"フレッシュフルーツ",zh:"新鲜水果"},p:"5,50 €",
+       d:{fr:"Supplément Nutella +1 €",en:"Nutella extra +1 €",it:"Supplemento Nutella +1 €",de:"Nutella-Zusatz +1 €",es:"Suplemento Nutella +1 €",
+          ru:"Nutella дополнительно +1 €",ja:"ヌテラ追加 +1 €",zh:"加 Nutella +1 €"}},
+      {n:{fr:"Dessert du jour",en:"Dessert of the day",it:"Dolce del giorno",de:"Dessert des Tages",es:"Postre del día",ru:"Десерт дня",ja:"本日のデザート",zh:"今日甜点"},p:"5,50 €"},
+      {n:{fr:"Glace à l'italienne",en:"Italian soft ice cream",it:"Gelato all'italiana",de:"Italienisches Softeis",es:"Helado a la italiana",
+          ru:"Итальянское мягкое мороженое",ja:"イタリアンソフトクリーム",zh:"意式软冰淇淋"},p:"3,00 / 4,50 €",
+       d:{fr:"Simple 3,00 € · Double 4,50 €",en:"Single 3,00 € · Double 4,50 €",it:"Singolo 3,00 € · Doppio 4,50 €",de:"Einfach 3,00 € · Doppelt 4,50 €",es:"Simple 3,00 € · Doble 4,50 €",
+          ru:"Одинарное 3,00 € · Двойное 4,50 €",ja:"シングル 3,00 € · ダブル 4,50 €",zh:"单球 3,00 € · 双球 4,50 €"}},
+      {n:{fr:"Cookies",en:"Cookies",it:"Cookies",de:"Cookies",es:"Cookies",ru:"Печенье",ja:"クッキー",zh:"曲奇"},p:"3,00 €"},
+      {n:{fr:"Cake",en:"Cake",it:"Torta",de:"Kuchen",es:"Bizcocho",ru:"Кекс",ja:"パウンドケーキ",zh:"磅蛋糕"},p:"3,00 €"},
+      {n:{fr:"Fondant au chocolat",en:"Chocolate fondant",it:"Tortino al cioccolato",de:"Schokoladen-Fondant",es:"Coulant de chocolate",
+          ru:"Шоколадный фондан",ja:"フォンダンショコラ",zh:"熔岩巧克力蛋糕"},p:"5,50 €"},
+      {n:{fr:"Fondant au châtaigne",en:"Chestnut fondant",it:"Tortino alla castagna",de:"Kastanien-Fondant",es:"Coulant de castaña",
+          ru:"Каштановый фондан",ja:"栗のフォンダン",zh:"栗子熔岩蛋糕"},p:"5,50 €"}
     ]
   },
   {
     id:"soft",compact:true,
-    nav:{fr:"Soda & Jus",en:"Sodas & Juices",it:"Bibite & Succhi",de:"Limos & Säfte",es:"Refrescos & Zumos"},
-    title:{fr:"Soda & Jus",en:"Sodas & Juices",it:"Bibite & Succhi",de:"Limonaden & Säfte",es:"Refrescos & Zumos"},
+    nav:{fr:"Soda & Jus",en:"Sodas & Juices",it:"Bibite & Succhi",de:"Limos & Säfte",es:"Refrescos & Zumos",
+         ru:"Напитки и соки",ja:"ソフトドリンク",zh:"软饮 & 果汁"},
+    title:{fr:"Soda & Jus",en:"Sodas & Juices",it:"Bibite & Succhi",de:"Limonaden & Säfte",es:"Refrescos & Zumos",
+           ru:"Напитки и соки",ja:"ソフトドリンク・ジュース",zh:"软饮 & 果汁"},
     items:[
       {n:"Coca",p:"3,50 €"},
       {n:"Coca Zéro",p:"3,50 €"},
       {n:"Liptonic",p:"3,50 €"},
       {n:"Ice Tea",p:"3,50 €"},
-      {n:{fr:"Limonade",en:"Lemonade",it:"Limonata",de:"Limonade",es:"Limonada"},p:"3,50 €"},
+      {n:{fr:"Limonade",en:"Lemonade",it:"Limonata",de:"Limonade",es:"Limonada",ru:"Лимонад",ja:"レモネード",zh:"柠檬汽水"},p:"3,50 €"},
       {n:"Orangina",p:"3,50 €"},
-      {n:"Diabolo",p:"4,50 €"},
-      {n:{fr:"Sirop",en:"Cordial",it:"Sciroppo",de:"Sirup",es:"Jarabe"},p:"3,50 €"},
+      {n:{fr:"Diabolo",en:"Diabolo",it:"Diabolo",de:"Diabolo",es:"Diabolo",ru:"Диаболо",ja:"ディアボロ",zh:"糖浆柠檬汽水"},p:"4,50 €",
+       d:{fr:"Limonade + sirop",en:"Lemonade + syrup",it:"Limonata + sciroppo",de:"Limonade + Sirup",es:"Limonada + jarabe",
+          ru:"Лимонад с сиропом",ja:"レモネード＋シロップ",zh:"柠檬汽水＋糖浆"}},
+      {n:{fr:"Sirop",en:"Cordial",it:"Sciroppo",de:"Sirup",es:"Jarabe",ru:"Сироп",ja:"シロップドリンク",zh:"糖浆饮料"},p:"3,50 €"},
       {n:"Mocktail Sir James",p:"5,50 €"},
-      {n:{fr:"Jus de fruit PAGO",en:"PAGO fruit juice",it:"Succo di frutta PAGO",de:"PAGO Fruchtsaft",es:"Zumo de fruta PAGO"},p:"3,00 €"},
-      {n:"Maya",p:"4,50 €",d:{fr:"Coco · goyave · litchi · ananas · PAM · matcha coconuts",en:"Coconut · guava · lychee · pineapple · PAM · matcha coconuts",it:"Cocco · guava · litchi · ananas · PAM · matcha coconuts",de:"Kokos · Guave · Litschi · Ananas · PAM · Matcha Coconuts",es:"Coco · guayaba · lichi · piña · PAM · matcha coconuts"}},
-      {n:"Mocktail",p:"5,50 €",d:{fr:"Passion · ginger · mojito",en:"Passion fruit · ginger · mojito",it:"Frutto della passione · ginger · mojito",de:"Maracuja · Ginger · Mojito",es:"Maracuyá · jengibre · mojito"}},
-      {n:{fr:"Thé glacé maison",en:"Homemade iced tea",it:"Tè freddo della casa",de:"Hausgemachter Eistee",es:"Té helado casero"},p:"5,50 €"},
-      {n:{fr:"Citronnade maison",en:"Homemade lemonade",it:"Limonata della casa",de:"Hausgemachte Zitronenlimonade",es:"Limonada casera"},p:"5,50 €"}
+      {n:{fr:"Jus de fruit PAGO",en:"PAGO fruit juice",it:"Succo di frutta PAGO",de:"PAGO Fruchtsaft",es:"Zumo de fruta PAGO",
+          ru:"Сок PAGO",ja:"PAGO フルーツジュース",zh:"PAGO 果汁"},p:"3,00 €"},
+      {n:"Maya",p:"4,50 €",
+       d:{fr:"Coco · goyave · litchi · ananas · PAM · matcha coconuts",
+          en:"Coconut · guava · lychee · pineapple · PAM · matcha coconuts",
+          it:"Cocco · guava · litchi · ananas · PAM · matcha coconuts",
+          de:"Kokos · Guave · Litschi · Ananas · PAM · Matcha Coconuts",
+          es:"Coco · guayaba · lichi · piña · PAM · matcha coconuts",
+          ru:"Кокос · гуава · личи · ананас · PAM · матча-кокос",
+          ja:"ココナッツ · グアバ · ライチ · パイナップル · PAM · 抹茶ココナッツ",
+          zh:"椰子 · 番石榴 · 荔枝 · 菠萝 · PAM · 抹茶椰子"}},
+      {n:"Mocktail",p:"5,50 €",
+       d:{fr:"Passion · ginger · mojito",en:"Passion fruit · ginger · mojito",it:"Frutto della passione · ginger · mojito",de:"Maracuja · Ginger · Mojito",es:"Maracuyá · jengibre · mojito",
+          ru:"Маракуйя · имбирь · мохито",ja:"パッションフルーツ · ジンジャー · モヒート",zh:"百香果 · 姜汁 · 莫吉托"}},
+      {n:{fr:"Thé glacé maison",en:"Homemade iced tea",it:"Tè freddo della casa",de:"Hausgemachter Eistee",es:"Té helado casero",
+          ru:"Домашний холодный чай",ja:"自家製アイスティー",zh:"自制冰茶"},p:"5,50 €"},
+      {n:{fr:"Citronnade maison",en:"Homemade lemonade",it:"Limonata della casa",de:"Hausgemachte Zitronenlimonade",es:"Limonada casera",
+          ru:"Домашний лимонад",ja:"自家製レモネード",zh:"自制柠檬水"},p:"5,50 €"}
     ]
   },
   {
     id:"cafes",compact:true,
-    nav:{fr:"Cafés & Thés",en:"Coffee & Tea",it:"Caffè & Tè",de:"Kaffee & Tee",es:"Cafés & Tés"},
-    title:{fr:"Cafés & Thés",en:"Coffee & Tea",it:"Caffè & Tè",de:"Kaffee & Tee",es:"Cafés & Tés"},
+    nav:{fr:"Cafés & Thés",en:"Coffee & Tea",it:"Caffè & Tè",de:"Kaffee & Tee",es:"Cafés & Tés",ru:"Кофе и чай",ja:"コーヒー・お茶",zh:"咖啡 & 茶"},
+    title:{fr:"Cafés & Thés",en:"Coffee & Tea",it:"Caffè & Tè",de:"Kaffee & Tee",es:"Cafés & Tés",ru:"Кофе и чай",ja:"コーヒー・お茶",zh:"咖啡 & 茶"},
     items:[
-      {n:"Espresso",p:"2,00 €"},
-      {n:"Double Espresso",p:"3,50 €"},
-      {n:"Café Macchiato",p:"2,50 €"},
-      {n:"Americano",p:"3,00 €"},
-      {n:"Cappuccino",p:"4,50 €"},
-      {n:{fr:"Chocolat chaud",en:"Hot chocolate",it:"Cioccolata calda",de:"Heiße Schokolade",es:"Chocolate caliente"},p:"5,00 €"},
-      {n:"Ube Latte",p:"6,50 €"},
-      {n:"Iced Latte",p:"6,00 €"},
-      {n:"Matcha Latte",p:"6,00 €"},
-      {n:{fr:"Café Frappé",en:"Iced coffee (frappé)",it:"Caffè frappé",de:"Eiskaffee (Frappé)",es:"Café frappé"},p:"5,50 €"},
-      {n:"Mocha",p:"5,50 €"},
-      {n:"Thé Kusmi Tea",p:"4,50 €"}
+      {n:{fr:"Espresso",en:"Espresso",it:"Espresso",de:"Espresso",es:"Espresso",ru:"Эспрессо",ja:"エスプレッソ",zh:"浓缩咖啡"},p:"2,00 €"},
+      {n:{fr:"Double Espresso",en:"Double Espresso",it:"Espresso doppio",de:"Doppelter Espresso",es:"Espresso doble",ru:"Двойной эспрессо",ja:"ダブルエスプレッソ",zh:"双份浓缩咖啡"},p:"3,50 €"},
+      {n:{fr:"Café Macchiato",en:"Macchiato",it:"Caffè macchiato",de:"Macchiato",es:"Café macchiato",ru:"Макиато",ja:"カフェマキアート",zh:"玛奇朵"},p:"2,50 €"},
+      {n:{fr:"Americano",en:"Americano",it:"Americano",de:"Americano",es:"Americano",ru:"Американо",ja:"アメリカーノ",zh:"美式咖啡"},p:"3,00 €"},
+      {n:{fr:"Cappuccino",en:"Cappuccino",it:"Cappuccino",de:"Cappuccino",es:"Capuchino",ru:"Капучино",ja:"カプチーノ",zh:"卡布奇诺"},p:"4,50 €"},
+      {n:{fr:"Chocolat chaud",en:"Hot chocolate",it:"Cioccolata calda",de:"Heiße Schokolade",es:"Chocolate caliente",ru:"Горячий шоколад",ja:"ホットチョコレート",zh:"热巧克力"},p:"5,00 €"},
+      {n:{fr:"Ube Latte",en:"Ube Latte",it:"Ube Latte",de:"Ube Latte",es:"Ube Latte",ru:"Убэ-латте",ja:"ウベラテ",zh:"紫薯拿铁"},p:"6,50 €"},
+      {n:{fr:"Iced Latte",en:"Iced Latte",it:"Latte freddo",de:"Iced Latte",es:"Latte helado",ru:"Айс-латте",ja:"アイスラテ",zh:"冰拿铁"},p:"6,00 €"},
+      {n:{fr:"Matcha Latte",en:"Matcha Latte",it:"Matcha Latte",de:"Matcha Latte",es:"Matcha Latte",ru:"Матча-латте",ja:"抹茶ラテ",zh:"抹茶拿铁"},p:"6,00 €"},
+      {n:{fr:"Café Frappé",en:"Iced coffee (frappé)",it:"Caffè frappé",de:"Eiskaffee (Frappé)",es:"Café frappé",ru:"Фраппе",ja:"カフェフラッペ",zh:"冰摇咖啡"},p:"5,50 €"},
+      {n:{fr:"Mocha",en:"Mocha",it:"Mocha",de:"Mocha",es:"Mocha",ru:"Мокка",ja:"モカ",zh:"摩卡"},p:"5,50 €"},
+      {n:{fr:"Thé Kusmi Tea",en:"Kusmi Tea",it:"Tè Kusmi",de:"Kusmi Tee",es:"Té Kusmi",ru:"Чай Kusmi",ja:"クスミティー",zh:"Kusmi 茶"},p:"4,50 €"}
     ]
   },
   {
     id:"bieres",compact:true,
-    nav:{fr:"Bières",en:"Beer",it:"Birre",de:"Bier",es:"Cervezas"},
-    title:{fr:"Bières Bouteille",en:"Bottled Beer",it:"Birre in Bottiglia",de:"Flaschenbier",es:"Cervezas"},
+    nav:{fr:"Bières",en:"Beer",it:"Birre",de:"Bier",es:"Cervezas",ru:"Пиво",ja:"ビール",zh:"啤酒"},
+    title:{fr:"Bières Bouteille",en:"Bottled Beer",it:"Birre in Bottiglia",de:"Flaschenbier",es:"Cervezas",ru:"Пиво в бутылках",ja:"ボトルビール",zh:"瓶装啤酒"},
     items:[ {n:"Pietra 33 cl",p:"5,00 €"} ]
   },
   {
     id:"cocktails",compact:true,
-    nav:{fr:"Cocktails",en:"Cocktails",it:"Cocktail",de:"Cocktails",es:"Cócteles"},
-    title:{fr:"Cocktails",en:"Cocktails",it:"Cocktail",de:"Cocktails",es:"Cócteles"},
+    nav:{fr:"Cocktails",en:"Cocktails",it:"Cocktail",de:"Cocktails",es:"Cócteles",ru:"Коктейли",ja:"カクテル",zh:"鸡尾酒"},
+    title:{fr:"Cocktails",en:"Cocktails",it:"Cocktail",de:"Cocktails",es:"Cócteles",ru:"Коктейли",ja:"カクテル",zh:"鸡尾酒"},
     items:[
       {n:"Italiscus Spritz",p:"12,00 €"},
       {n:"Aperol Spritz",p:"9,00 €"},
@@ -193,11 +370,11 @@ const SECTIONS = [
   },
   {
     id:"eaux",compact:true,
-    nav:{fr:"Eaux",en:"Water",it:"Acque",de:"Wasser",es:"Aguas"},
-    title:{fr:"Eaux",en:"Water",it:"Acque",de:"Wasser",es:"Aguas"},
+    nav:{fr:"Eaux",en:"Water",it:"Acque",de:"Wasser",es:"Aguas",ru:"Вода",ja:"水",zh:"水"},
+    title:{fr:"Eaux",en:"Water",it:"Acque",de:"Wasser",es:"Aguas",ru:"Вода",ja:"お水",zh:"水"},
     items:[
-      {n:"Zilia 50 cl",p:"3,00 €",d:{fr:"1 L — 5,50 €",en:"1 L — 5,50 €",it:"1 L — 5,50 €",de:"1 L — 5,50 €",es:"1 L — 5,50 €"}},
-      {n:"Orezza 33 cl",p:"3,00 €",d:{fr:"1 L — 5,50 €",en:"1 L — 5,50 €",it:"1 L — 5,50 €",de:"1 L — 5,50 €",es:"1 L — 5,50 €"}}
+      {n:"Zilia 50 cl",p:"3,00 €",d:"1 L — 5,50 €"},
+      {n:"Orezza 33 cl",p:"3,00 €",d:"1 L — 5,50 €"}
     ]
   }
 ];
@@ -208,11 +385,15 @@ function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").repl
 function render(lang){
   currentLang = lang;
   document.documentElement.lang = lang;
+  document.documentElement.dataset.script = NONLATIN.includes(lang) ? "nonlatin" : "latin";
+
   document.querySelectorAll("#langbar button").forEach(b=>{
     b.classList.toggle("active", b.dataset.lang===lang);
   });
+
   const nav = document.getElementById("nav");
   nav.innerHTML = '<a href="#top">↑</a>' + SECTIONS.map(s=>`<a href="#${s.id}">${esc(t(s.nav,lang))}</a>`).join("");
+
   const menu = document.getElementById("menu");
   let html = '<span id="top"></span>';
   for(const s of SECTIONS){
@@ -240,7 +421,7 @@ function render(lang){
 }
 
 const langbar = document.getElementById("langbar");
-langbar.innerHTML = LANGS.map(l=>`<button data-lang="${l.code}"><span class="flag">${l.flag}</span>${l.label}</button>`).join("");
+langbar.innerHTML = LANGS.map(l=>`<button data-lang="${l.code}" aria-label="${l.code}"><span class="flag">${l.flag}</span>${l.label}</button>`).join("");
 langbar.querySelectorAll("button").forEach(b=>{ b.addEventListener("click",()=>render(b.dataset.lang)); });
 
 const supported = LANGS.map(l=>l.code);
