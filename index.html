@@ -52,6 +52,38 @@
   footer{text-align:center;padding:30px 20px 10px;color:var(--muted);}
   footer .big{font-family:'Pacifico',cursive;color:var(--green);font-size:1.8rem;transform:rotate(-3deg);display:inline-block;}
   footer p{margin-top:10px;font-size:.8rem;}
+
+  /* ---------- Photos des produits ---------- */
+  .item.has-photo{display:flex;gap:12px;align-items:flex-start;}
+  .item-thumb{width:80px;height:80px;flex:0 0 80px;border-radius:10px;object-fit:cover;
+    background:#e7e3d3;cursor:zoom-in;display:block;}
+  .item-body{flex:1;min-width:0;}
+  .compact .item.has-photo{padding:10px 12px;}
+  .compact .item-thumb{width:64px;height:64px;flex:0 0 64px;}
+
+  /* ---------- Bloc boissons signature ---------- */
+  .signature{background:var(--green);border-radius:16px;overflow:hidden;margin-bottom:16px;
+    box-shadow:0 4px 14px rgba(10,67,34,.18);}
+  .signature-img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block;cursor:zoom-in;background:var(--green-deep);}
+  .signature-body{padding:14px 16px 16px;color:var(--cream);}
+  .signature-kicker{font-size:.68rem;letter-spacing:1.4px;text-transform:uppercase;opacity:.85;font-weight:600;}
+  .signature-title{font-family:'Pacifico',cursive;font-size:1.45rem;margin:2px 0 8px;line-height:1.15;}
+  html[data-script="nonlatin"] .signature-title{font-family:var(--stack);font-weight:700;font-size:1.2rem;}
+  .signature-list{display:grid;gap:7px;}
+  .signature-item{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    background:rgba(246,241,223,.12);border-radius:9px;padding:8px 11px;}
+  .signature-item .n{font-weight:600;font-size:.95rem;}
+  .signature-item .p{font-weight:700;white-space:nowrap;}
+  .signature-note{font-size:.76rem;opacity:.85;margin-top:9px;font-style:italic;}
+  html[data-script="nonlatin"] .signature-note{font-style:normal;}
+
+  /* ---------- Agrandissement au clic ---------- */
+  .lightbox{position:fixed;inset:0;background:rgba(8,26,16,.94);display:none;
+    align-items:center;justify-content:center;z-index:100;padding:18px;}
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:100%;max-height:84vh;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+  .lightbox .close{position:absolute;top:14px;right:16px;color:var(--cream);font-size:1.9rem;
+    line-height:1;background:none;border:none;cursor:pointer;padding:6px 10px;}
   .top-link{display:block;text-align:center;margin:18px auto 0;color:var(--green);font-size:.8rem;text-decoration:none;font-weight:600;}
 
   /* --- Pacifico ne contient ni cyrillique ni CJK : on bascule les titres
@@ -79,6 +111,8 @@
 
 <nav id="nav"></nav>
 <main id="menu"></main>
+
+<div class="lightbox" id="lightbox"><button class="close" id="lb-close" aria-label="Fermer">&times;</button><img id="lb-img" alt=""></div>
 
 <footer>
   <div class="big">La dieta domani !</div>
@@ -379,6 +413,36 @@ const SECTIONS = [
   }
 ];
 
+
+/* ---------- Photos ----------
+   Deposer les fichiers dans le dossier "photos/" a cote de index.html.
+   Si une photo est absente, la fiche s'affiche normalement, sans image. */
+const PHOTO_DIR = "photos/";
+const PHOTOS = {
+  "Parma":"parma.jpg", "Caprese":"caprese.jpg", "Pistachio":"pistachio.jpg",
+  "Tartufo":"tartufo.jpg", "Porchetta":"porchetta.jpg", "Bonifazinca":"bonifazinca.jpg",
+  "Ortu":"ortu.jpg", "Inferno":"inferno.jpg", "Carciofo":"carciofo.jpg", "Cotto":"cotto.jpg"
+};
+
+/* ---------- Bloc boissons signature ---------- */
+const SIGNATURE = {
+  photo: "boissons-signature.jpg",
+  kicker:{fr:"À ne pas manquer",en:"Don't miss",it:"Da non perdere",de:"Nicht verpassen",es:"No te lo pierdas",
+          ru:"Не пропустите",ja:"おすすめ",zh:"不容错过"},
+  title:{fr:"Nos boissons signature",en:"Our signature drinks",it:"Le nostre bevande della casa",
+         de:"Unsere Hausgetränke",es:"Nuestras bebidas de la casa",ru:"Фирменные напитки",
+         ja:"当店自慢のドリンク",zh:"本店招牌饮品"},
+  note:{fr:"Préparées maison, chaque jour.",en:"Homemade, fresh every day.",it:"Preparate in casa, ogni giorno.",
+        de:"Täglich hausgemacht.",es:"Caseras, cada día.",ru:"Готовим сами, каждый день.",
+        ja:"毎日、店内で手作りしています。",zh:"每日自制。"},
+  items:[
+    {n:{fr:"Citronnade maison",en:"Homemade lemonade",it:"Limonata della casa",de:"Hausgemachte Zitronenlimonade",
+        es:"Limonada casera",ru:"Домашний лимонад",ja:"自家製レモネード",zh:"自制柠檬水"}, p:"5,50 €"},
+    {n:{fr:"Thé glacé maison",en:"Homemade iced tea",it:"Tè freddo della casa",de:"Hausgemachter Eistee",
+        es:"Té helado casero",ru:"Домашний холодный чай",ja:"自家製アイスティー",zh:"自制冰茶"}, p:"5,50 €"}
+  ]
+};
+
 let currentLang = "fr";
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
@@ -405,11 +469,19 @@ function render(lang){
       for(const c of s.cards){ html += `<div class="compose-card"><h3>${esc(t(c.h,lang))}</h3><p>${esc(t(c.p,lang))}</p></div>`; }
       html += `</div>`;
     } else {
+      if(s.id === "soft") html += signatureBlock(lang);
       html += s.compact ? '<div class="compact">' : '';
       for(const it of s.items){
-        html += `<div class="item"><div class="item-row"><span class="item-name">${esc(t(it.n,lang))}</span><span class="item-price">${esc(it.p)}</span></div>`;
-        if(it.d) html += `<div class="item-desc">${esc(t(it.d,lang))}</div>`;
-        html += `</div>`;
+        const name = t(it.n,lang);
+        const file = PHOTOS[typeof it.n === "string" ? it.n : (it.n.fr||"")];
+        const inner = `<div class="item-row"><span class="item-name">${esc(name)}</span><span class="item-price">${esc(it.p)}</span></div>`
+                    + (it.d ? `<div class="item-desc">${esc(t(it.d,lang))}</div>` : "");
+        if(file){
+          html += `<div class="item has-photo"><img class="item-thumb" loading="lazy" decoding="async" `
+                + `src="${PHOTO_DIR}${file}" alt="${esc(name)}"><div class="item-body">${inner}</div></div>`;
+        } else {
+          html += `<div class="item">${inner}</div>`;
+        }
       }
       html += s.compact ? '</div>' : '';
     }
@@ -418,7 +490,50 @@ function render(lang){
   html += `<a href="#top" class="top-link">${esc(t(UI.backTop,lang))}</a>`;
   menu.innerHTML = html;
   document.getElementById("footer-note").textContent = t(UI.footer,lang);
+  setupPhotos();
 }
+
+
+function signatureBlock(lang){
+  const s = SIGNATURE;
+  let h = `<div class="signature">`;
+  h += `<img class="signature-img" loading="lazy" decoding="async" src="${PHOTO_DIR}${s.photo}" alt="${esc(t(s.title,lang))}">`;
+  h += `<div class="signature-body">`;
+  h += `<div class="signature-kicker">${esc(t(s.kicker,lang))}</div>`;
+  h += `<div class="signature-title">${esc(t(s.title,lang))}</div>`;
+  h += `<div class="signature-list">`;
+  for(const it of s.items){
+    h += `<div class="signature-item"><span class="n">${esc(t(it.n,lang))}</span><span class="p">${esc(it.p)}</span></div>`;
+  }
+  h += `</div><div class="signature-note">${esc(t(s.note,lang))}</div></div></div>`;
+  return h;
+}
+
+/* Repli propre : si une photo manque, on retire l'image sans casser la mise en page. */
+function setupPhotos(){
+  document.querySelectorAll(".item-thumb").forEach(img=>{
+    img.addEventListener("error", ()=>{
+      const card = img.closest(".item");
+      const body = card && card.querySelector(".item-body");
+      if(card && body){ card.classList.remove("has-photo"); card.innerHTML = body.innerHTML; }
+    });
+  });
+  const sig = document.querySelector(".signature-img");
+  if(sig) sig.addEventListener("error", ()=> sig.remove());
+}
+
+/* Agrandissement au clic */
+const lb = document.getElementById("lightbox");
+const lbImg = document.getElementById("lb-img");
+function closeLb(){ lb.classList.remove("open"); lbImg.removeAttribute("src"); }
+document.getElementById("lb-close").addEventListener("click", closeLb);
+lb.addEventListener("click", e=>{ if(e.target === lb) closeLb(); });
+document.addEventListener("keydown", e=>{ if(e.key === "Escape") closeLb(); });
+document.addEventListener("click", e=>{
+  const img = e.target.closest(".item-thumb, .signature-img");
+  if(!img || !img.getAttribute("src")) return;
+  lbImg.src = img.src; lb.classList.add("open");
+});
 
 const langbar = document.getElementById("langbar");
 langbar.innerHTML = LANGS.map(l=>`<button data-lang="${l.code}" aria-label="${l.code}"><span class="flag">${l.flag}</span>${l.label}</button>`).join("");
