@@ -478,7 +478,7 @@ function render(lang){
                     + (it.d ? `<div class="item-desc">${esc(t(it.d,lang))}</div>` : "");
         if(file){
           html += `<div class="item has-photo"><img class="item-thumb" loading="lazy" decoding="async" `
-                + `src="${PHOTO_DIR}${file}" alt="${esc(name)}"><div class="item-body">${inner}</div></div>`;
+                + `src="${PHOTO_DIR}${file}" data-file="${file}" alt="${esc(name)}"><div class="item-body">${inner}</div></div>`;
         } else {
           html += `<div class="item">${inner}</div>`;
         }
@@ -497,7 +497,7 @@ function render(lang){
 function signatureBlock(lang){
   const s = SIGNATURE;
   let h = `<div class="signature">`;
-  h += `<img class="signature-img" loading="lazy" decoding="async" src="${PHOTO_DIR}${s.photo}" alt="${esc(t(s.title,lang))}">`;
+  h += `<img class="signature-img" loading="lazy" decoding="async" src="${PHOTO_DIR}${s.photo}" data-file="${s.photo}" alt="${esc(t(s.title,lang))}">`;
   h += `<div class="signature-body">`;
   h += `<div class="signature-kicker">${esc(t(s.kicker,lang))}</div>`;
   h += `<div class="signature-title">${esc(t(s.title,lang))}</div>`;
@@ -509,17 +509,28 @@ function signatureBlock(lang){
   return h;
 }
 
-/* Repli propre : si une photo manque, on retire l'image sans casser la mise en page. */
+/* Repli en cascade : on cherche la photo dans "photos/", puis a la racine du site.
+   Si elle est introuvable, on retire l'image sans casser la mise en page. */
+function attachFallback(img, abandon){
+  img.addEventListener("error", ()=>{
+    if(!img.dataset.retried && img.dataset.file){
+      img.dataset.retried = "1";
+      img.src = img.dataset.file;      // 2e essai : fichier a la racine
+      return;
+    }
+    abandon();
+  });
+}
 function setupPhotos(){
   document.querySelectorAll(".item-thumb").forEach(img=>{
-    img.addEventListener("error", ()=>{
+    attachFallback(img, ()=>{
       const card = img.closest(".item");
       const body = card && card.querySelector(".item-body");
       if(card && body){ card.classList.remove("has-photo"); card.innerHTML = body.innerHTML; }
     });
   });
   const sig = document.querySelector(".signature-img");
-  if(sig) sig.addEventListener("error", ()=> sig.remove());
+  if(sig) attachFallback(sig, ()=> sig.remove());
 }
 
 /* Agrandissement au clic */
