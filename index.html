@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f5c2e">
+<title>Ponza Focaccia — Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#0f5c2e; --green-deep:#0a4322; --cream:#f6f1df;
+    --cream-card:#fbf8ee; --ink:#123a24; --muted:#4a6b54;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Poppins',system-ui,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5;padding-bottom:60px;}
+  header{background:var(--green);color:var(--cream);text-align:center;padding:30px 20px 22px;border-bottom:5px solid var(--green-deep);}
+  header .brand{font-family:'Pacifico',cursive;font-size:2.6rem;line-height:1.05;letter-spacing:.5px;}
+  header .wave{width:120px;height:14px;margin:12px auto 8px;display:block;}
+  header .slogan{font-family:'Pacifico',cursive;font-size:1.15rem;opacity:.9;transform:rotate(-4deg);display:inline-block;margin-top:4px;}
+  .langbar{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:16px;}
+  .langbar button{font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;background:transparent;color:var(--cream);border:1.5px solid rgba(246,241,223,.4);border-radius:999px;padding:5px 11px;display:flex;align-items:center;gap:5px;transition:.15s;}
+  .langbar button .flag{font-size:1rem;line-height:1;}
+  .langbar button.active{background:var(--cream);color:var(--green-deep);border-color:var(--cream);}
+  nav{position:sticky;top:0;z-index:20;background:var(--green-deep);display:flex;gap:6px;overflow-x:auto;padding:10px 12px;scrollbar-width:none;box-shadow:0 3px 10px rgba(0,0,0,.15);}
+  nav::-webkit-scrollbar{display:none;}
+  nav a{flex:0 0 auto;color:var(--cream);text-decoration:none;font-size:.82rem;font-weight:600;padding:7px 14px;border-radius:999px;border:1.5px solid rgba(246,241,223,.35);white-space:nowrap;transition:.15s;}
+  nav a:active{background:var(--cream);color:var(--green-deep);}
+  main{max-width:640px;margin:0 auto;padding:8px 16px 24px;}
+  section{padding-top:26px;scroll-margin-top:64px;}
+  .sec-title{font-family:'Pacifico',cursive;color:var(--green);font-size:1.9rem;margin-bottom:2px;}
+  .sec-sub{color:var(--muted);font-size:.85rem;margin-bottom:14px;font-style:italic;}
+  .item{background:var(--cream-card);border:1.5px solid rgba(15,92,46,.15);border-radius:14px;padding:13px 15px;margin-bottom:10px;box-shadow:0 1px 0 rgba(15,92,46,.05);}
+  .item-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .item-name{font-weight:600;font-size:1.05rem;color:var(--green-deep);}
+  .item-price{font-weight:700;color:var(--green);white-space:nowrap;font-size:1rem;}
+  .item-desc{font-size:.86rem;color:var(--muted);margin-top:3px;}
+  .compact .item{padding:10px 15px;margin-bottom:7px;}
+  .compact .item-desc{margin-top:1px;}
+  .compose-price{text-align:center;font-family:'Pacifico',cursive;color:var(--green);font-size:1.5rem;margin:-4px 0 14px;}
+  .compose-grid{display:grid;gap:10px;}
+  .compose-card{background:var(--cream-card);border:1.5px solid rgba(15,92,46,.15);border-radius:14px;padding:13px 15px;}
+  .compose-card h3{font-family:'Pacifico',cursive;color:var(--green);font-size:1.15rem;font-weight:400;margin-bottom:6px;}
+  .compose-card p{font-size:.88rem;color:var(--ink);}
+  footer{text-align:center;padding:30px 20px 10px;color:var(--muted);}
+  footer .big{font-family:'Pacifico',cursive;color:var(--green);font-size:1.8rem;transform:rotate(-3deg);display:inline-block;}
+  footer p{margin-top:10px;font-size:.8rem;}
+  .top-link{display:block;text-align:center;margin:18px auto 0;color:var(--green);font-size:.8rem;text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Ponza<br>Focaccia</div>
+  <svg class="wave" viewBox="0 0 120 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 8 Q17 -2 32 7 T62 7 T92 7 T118 7" stroke="#f6f1df" stroke-width="3.5" stroke-linecap="round"/>
+  </svg>
+  <div class="slogan">La dieta domani !</div>
+  <div class="langbar" id="langbar"></div>
+</header>
+
+<nav id="nav"></nav>
+<main id="menu"></main>
+
+<footer>
+  <div class="big">La dieta domani !</div>
+  <p id="footer-note"></p>
+</footer>
+
+<script>
+function t(v, lang){ return (typeof v === "string") ? v : (v[lang] || v.fr); }
+
+const LANGS = [
+  {code:"fr", flag:"🇫🇷", label:"FR"},
+  {code:"en", flag:"🇬🇧", label:"EN"},
+  {code:"it", flag:"🇮🇹", label:"IT"},
+  {code:"de", flag:"🇩🇪", label:"DE"},
+  {code:"es", flag:"🇪🇸", label:"ES"}
+];
+
+const UI = {
+  backTop:{fr:"↑ Retour en haut",en:"↑ Back to top",it:"↑ Torna su",de:"↑ Nach oben",es:"↑ Volver arriba"},
+  footer:{fr:"Ponza Focaccia · Prix en euros, taxes comprises",en:"Ponza Focaccia · Prices in euros, taxes included",it:"Ponza Focaccia · Prezzi in euro, tasse incluse",de:"Ponza Focaccia · Preise in Euro, inkl. Steuern",es:"Ponza Focaccia · Precios en euros, impuestos incluidos"}
+};
+
+const SECTIONS = [
+  {
+    id:"focaccias",
+    nav:{fr:"Focaccias",en:"Focaccias",it:"Focacce",de:"Focacce",es:"Focaccias"},
+    title:{fr:"Nos Focaccias",en:"Our Focaccias",it:"Le nostre Focacce",de:"Unsere Focacce",es:"Nuestras Focaccias"},
+    sub:{fr:"La signature de la maison",en:"The house signature",it:"La specialità della casa",de:"Das Aushängeschild des Hauses",es:"La especialidad de la casa"},
+    items:[
+      {n:"Parma",p:"10,90 €",d:{fr:"Jambon cru, mozzarella di buffala, tomates confites, crème de balsamique",en:"Cured ham, buffalo mozzarella, candied tomatoes, balsamic cream",it:"Prosciutto crudo, mozzarella di bufala, pomodori confit, crema di balsamico",de:"Rohschinken, Büffelmozzarella, kandierte Tomaten, Balsamico-Creme",es:"Jamón curado, mozzarella de búfala, tomates confitados, crema de balsámico"}},
+      {n:"Caprese",p:"9,90 €",d:{fr:"Tomates, mozzarella di buffala, pesto, roquette, crème de balsamique",en:"Tomatoes, buffalo mozzarella, pesto, rocket, balsamic cream",it:"Pomodori, mozzarella di bufala, pesto, rucola, crema di balsamico",de:"Tomaten, Büffelmozzarella, Pesto, Rucola, Balsamico-Creme",es:"Tomates, mozzarella de búfala, pesto, rúcula, crema de balsámico"}},
+      {n:"Pistachio",p:"13,90 €",d:{fr:"Mortadella, stracciatella, pesto de pistaches, éclats de pistache, roquette",en:"Mortadella, stracciatella, pistachio pesto, pistachio pieces, rocket",it:"Mortadella, stracciatella, pesto di pistacchio, granella di pistacchio, rucola",de:"Mortadella, Stracciatella, Pistazienpesto, Pistazienstückchen, Rucola",es:"Mortadela, stracciatella, pesto de pistacho, trocitos de pistacho, rúcula"}},
+      {n:"Tartufo",p:"14,90 €",d:{fr:"Jambon cuit, mozzarella di buffala, crème de truffe, roquette",en:"Cooked ham, buffalo mozzarella, truffle cream, rocket",it:"Prosciutto cotto, mozzarella di bufala, crema di tartufo, rucola",de:"Kochschinken, Büffelmozzarella, Trüffelcreme, Rucola",es:"Jamón cocido, mozzarella de búfala, crema de trufa, rúcula"}},
+      {n:"Porchetta",p:"13,90 €",d:{fr:"Porchetta, taleggio, pesto rosso, roquette",en:"Porchetta, taleggio, red pesto, rocket",it:"Porchetta, taleggio, pesto rosso, rucola",de:"Porchetta, Taleggio, rotes Pesto, Rucola",es:"Porchetta, taleggio, pesto rojo, rúcula"}},
+      {n:"Bonifazinca",p:"12,90 €",d:{fr:"Aubergine à la bonifacienne, provolone, coulis de tomate, basilic",en:"Bonifacio-style aubergine, provolone, tomato coulis, basil",it:"Melanzana alla bonifacina, provolone, coulis di pomodoro, basilico",de:"Aubergine nach Bonifacio-Art, Provolone, Tomaten-Coulis, Basilikum",es:"Berenjena al estilo de Bonifacio, provolone, coulis de tomate, albahaca"}},
+      {n:"Ortu",p:"11,90 €",d:{fr:"Légumes confits (courgettes, aubergines), provolone, pesto rosso, roquette, crème de balsamique",en:"Candied vegetables (courgettes, aubergines), provolone, red pesto, rocket, balsamic cream",it:"Verdure confit (zucchine, melanzane), provolone, pesto rosso, rucola, crema di balsamico",de:"Kandiertes Gemüse (Zucchini, Auberginen), Provolone, rotes Pesto, Rucola, Balsamico-Creme",es:"Verduras confitadas (calabacín, berenjena), provolone, pesto rojo, rúcula, crema de balsámico"}},
+      {n:"Inferno",p:"12,90 €",d:{fr:"Spianata piccante, mozzarella di buffala, nduja, poivrons grillés, roquette",en:"Spicy spianata, buffalo mozzarella, nduja, grilled peppers, rocket",it:"Spianata piccante, mozzarella di bufala, nduja, peperoni grigliati, rucola",de:"Scharfe Spianata, Büffelmozzarella, Nduja, gegrillte Paprika, Rucola",es:"Spianata picante, mozzarella de búfala, nduja, pimientos asados, rúcula"}},
+      {n:"Carciofo",p:"13,90 €",d:{fr:"Coppa, crème d'artichauts, taleggio, roquette, crème de balsamique",en:"Coppa, artichoke cream, taleggio, rocket, balsamic cream",it:"Coppa, crema di carciofi, taleggio, rucola, crema di balsamico",de:"Coppa, Artischockencreme, Taleggio, Rucola, Balsamico-Creme",es:"Coppa, crema de alcachofa, taleggio, rúcula, crema de balsámico"}},
+      {n:"Cotto",p:"11,90 €",d:{fr:"Jambon cuit, stracciatella, pesto verde, roquette, crème de balsamique",en:"Cooked ham, stracciatella, green pesto, rocket, balsamic cream",it:"Prosciutto cotto, stracciatella, pesto verde, rucola, crema di balsamico",de:"Kochschinken, Stracciatella, grünes Pesto, Rucola, Balsamico-Creme",es:"Jamón cocido, stracciatella, pesto verde, rúcula, crema de balsámico"}}
+    ]
+  },
+  {
+    id:"compose",
+    nav:{fr:"Compose ta Focaccia",en:"Build Your Own",it:"Componi la tua",de:"Selbst gestalten",es:"Crea la tuya"},
+    title:{fr:"Compose ta Focaccia !",en:"Build Your Own Focaccia!",it:"Componi la tua Focaccia!",de:"Stelle deine Focaccia zusammen!",es:"¡Crea tu Focaccia!"},
+    price:"14,90 €",
+    cards:[
+      {h:{fr:"1 Crème",en:"1 Cream",it:"1 Crema",de:"1 Creme",es:"1 Crema"},p:{fr:"Pesto · Pesto rosso · Pesto de pistache · Crème d'artichauts · Crème de truffe (+1 €) · Nduja",en:"Pesto · Red pesto · Pistachio pesto · Artichoke cream · Truffle cream (+1 €) · Nduja",it:"Pesto · Pesto rosso · Pesto di pistacchio · Crema di carciofi · Crema di tartufo (+1 €) · Nduja",de:"Pesto · Rotes Pesto · Pistazienpesto · Artischockencreme · Trüffelcreme (+1 €) · Nduja",es:"Pesto · Pesto rojo · Pesto de pistacho · Crema de alcachofa · Crema de trufa (+1 €) · Nduja"}},
+      {h:{fr:"1 Charcuterie",en:"1 Cured meat",it:"1 Salume",de:"1 Wurst / Schinken",es:"1 Embutido"},p:{fr:"Jambon cuit · Jambon cru · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bressaola (+1 €)",en:"Cooked ham · Cured ham · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",it:"Prosciutto cotto · Prosciutto crudo · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",de:"Kochschinken · Rohschinken · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",es:"Jamón cocido · Jamón curado · Mortadela · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)"}},
+      {h:{fr:"1 Fromage",en:"1 Cheese",it:"1 Formaggio",de:"1 Käse",es:"1 Queso"},p:{fr:"Stracciatella · Mozzarella di buffala · Provolone · Taleggio · Scarmozza",en:"Stracciatella · Buffalo mozzarella · Provolone · Taleggio · Scamorza",it:"Stracciatella · Mozzarella di bufala · Provolone · Taleggio · Scamorza",de:"Stracciatella · Büffelmozzarella · Provolone · Taleggio · Scamorza",es:"Stracciatella · Mozzarella de búfala · Provolone · Taleggio · Scamorza"}},
+      {h:{fr:"1 Légume",en:"1 Vegetable",it:"1 Verdura",de:"1 Gemüse",es:"1 Verdura"},p:{fr:"Aubergines confites · Courgettes confites · Poivrons grillés · Tomates confites · Tomates fraîches",en:"Candied aubergines · Candied courgettes · Grilled peppers · Candied tomatoes · Fresh tomatoes",it:"Melanzane confit · Zucchine confit · Peperoni grigliati · Pomodori confit · Pomodori freschi",de:"Kandierte Auberginen · Kandierte Zucchini · Gegrillte Paprika · Kandierte Tomaten · Frische Tomaten",es:"Berenjenas confitadas · Calabacines confitados · Pimientos asados · Tomates confitados · Tomates frescos"}},
+      {h:{fr:"Condiments inclus",en:"Included toppings",it:"Condimenti inclusi",de:"Inklusive Beilagen",es:"Condimentos incluidos"},p:{fr:"Basilic · Roquette · Éclats de pistaches · Éclats de noisettes · Crème balsamique",en:"Basil · Rocket · Pistachio pieces · Hazelnut pieces · Balsamic cream",it:"Basilico · Rucola · Granella di pistacchio · Granella di nocciole · Crema di balsamico",de:"Basilikum · Rucola · Pistazienstückchen · Haselnussstückchen · Balsamico-Creme",es:"Albahaca · Rúcula · Trocitos de pistacho · Trocitos de avellana · Crema de balsámico"}}
+    ]
+  },
+  {
+    id:"desserts",compact:true,
+    nav:{fr:"Desserts",en:"Desserts",it:"Dolci",de:"Desserts",es:"Postres"},
+    title:{fr:"Desserts",en:"Desserts",it:"Dolci",de:"Desserts",es:"Postres"},
+    items:[
+      {n:"Tiramisu",p:"5,00 €"},
+      {n:"Pana Cotta",p:"4,50 €"},
+      {n:{fr:"Baba au Rhum",en:"Rum Baba",it:"Babà al rum",de:"Rum-Baba",es:"Babá al ron"},p:"5,50 €"},
+      {n:{fr:"Fruits frais",en:"Fresh fruit",it:"Frutta fresca",de:"Frisches Obst",es:"Fruta fresca"},p:"5,50 €",d:{fr:"Supplément Nutella +1 €",en:"Nutella extra +1 €",it:"Supplemento Nutella +1 €",de:"Nutella-Zusatz +1 €",es:"Suplemento Nutella +1 €"}},
+      {n:{fr:"Dessert du jour",en:"Dessert of the day",it:"Dolce del giorno",de:"Dessert des Tages",es:"Postre del día"},p:"5,50 €"},
+      {n:{fr:"Glace à l'italienne",en:"Italian soft ice cream",it:"Gelato all'italiana",de:"Italienisches Softeis",es:"Helado a la italiana"},p:"3,00 / 4,50 €",d:{fr:"Simple 3,00 € · Double 4,50 €",en:"Single 3,00 € · Double 4,50 €",it:"Singolo 3,00 € · Doppio 4,50 €",de:"Einfach 3,00 € · Doppelt 4,50 €",es:"Simple 3,00 € · Doble 4,50 €"}},
+      {n:"Cookies",p:"3,00 €"},
+      {n:{fr:"Cake",en:"Cake",it:"Torta",de:"Kuchen",es:"Bizcocho"},p:"3,00 €"},
+      {n:{fr:"Fondant au chocolat",en:"Chocolate fondant",it:"Tortino al cioccolato",de:"Schokoladen-Fondant",es:"Coulant de chocolate"},p:"5,50 €"},
+      {n:{fr:"Fondant au châtaigne",en:"Chestnut fondant",it:"Tortino alla castagna",de:"Kastanien-Fondant",es:"Coulant de castaña"},p:"5,50 €"}
+    ]
+  },
+  {
+    id:"soft",compact:true,
+    nav:{fr:"Soda & Jus",en:"Sodas & Juices",it:"Bibite & Succhi",de:"Limos & Säfte",es:"Refrescos & Zumos"},
+    title:{fr:"Soda & Jus",en:"Sodas & Juices",it:"Bibite & Succhi",de:"Limonaden & Säfte",es:"Refrescos & Zumos"},
+    items:[
+      {n:"Coca",p:"3,50 €"},
+      {n:"Coca Zéro",p:"3,50 €"},
+      {n:"Liptonic",p:"3,50 €"},
+      {n:"Ice Tea",p:"3,50 €"},
+      {n:{fr:"Limonade",en:"Lemonade",it:"Limonata",de:"Limonade",es:"Limonada"},p:"3,50 €"},
+      {n:"Orangina",p:"3,50 €"},
+      {n:"Diabolo",p:"4,50 €"},
+      {n:{fr:"Sirop",en:"Cordial",it:"Sciroppo",de:"Sirup",es:"Jarabe"},p:"3,50 €"},
+      {n:"Mocktail Sir James",p:"5,50 €"},
+      {n:{fr:"Jus de fruit PAGO",en:"PAGO fruit juice",it:"Succo di frutta PAGO",de:"PAGO Fruchtsaft",es:"Zumo de fruta PAGO"},p:"3,00 €"},
+      {n:"Maya",p:"4,50 €",d:{fr:"Coco · goyave · litchi · ananas · PAM · matcha coconuts",en:"Coconut · guava · lychee · pineapple · PAM · matcha coconuts",it:"Cocco · guava · litchi · ananas · PAM · matcha coconuts",de:"Kokos · Guave · Litschi · Ananas · PAM · Matcha Coconuts",es:"Coco · guayaba · lichi · piña · PAM · matcha coconuts"}},
+      {n:"Mocktail",p:"5,50 €",d:{fr:"Passion · ginger · mojito",en:"Passion fruit · ginger · mojito",it:"Frutto della passione · ginger · mojito",de:"Maracuja · Ginger · Mojito",es:"Maracuyá · jengibre · mojito"}},
+      {n:{fr:"Thé glacé maison",en:"Homemade iced tea",it:"Tè freddo della casa",de:"Hausgemachter Eistee",es:"Té helado casero"},p:"5,50 €"},
+      {n:{fr:"Citronnade maison",en:"Homemade lemonade",it:"Limonata della casa",de:"Hausgemachte Zitronenlimonade",es:"Limonada casera"},p:"5,50 €"}
+    ]
+  },
+  {
+    id:"cafes",compact:true,
+    nav:{fr:"Cafés & Thés",en:"Coffee & Tea",it:"Caffè & Tè",de:"Kaffee & Tee",es:"Cafés & Tés"},
+    title:{fr:"Cafés & Thés",en:"Coffee & Tea",it:"Caffè & Tè",de:"Kaffee & Tee",es:"Cafés & Tés"},
+    items:[
+      {n:"Espresso",p:"2,00 €"},
+      {n:"Double Espresso",p:"3,50 €"},
+      {n:"Café Macchiato",p:"2,50 €"},
+      {n:"Americano",p:"3,00 €"},
+      {n:"Cappuccino",p:"4,50 €"},
+      {n:{fr:"Chocolat chaud",en:"Hot chocolate",it:"Cioccolata calda",de:"Heiße Schokolade",es:"Chocolate caliente"},p:"5,00 €"},
+      {n:"Ube Latte",p:"6,50 €"},
+      {n:"Iced Latte",p:"6,00 €"},
+      {n:"Matcha Latte",p:"6,00 €"},
+      {n:{fr:"Café Frappé",en:"Iced coffee (frappé)",it:"Caffè frappé",de:"Eiskaffee (Frappé)",es:"Café frappé"},p:"5,50 €"},
+      {n:"Mocha",p:"5,50 €"},
+      {n:"Thé Kusmi Tea",p:"4,50 €"}
+    ]
+  },
+  {
+    id:"bieres",compact:true,
+    nav:{fr:"Bières",en:"Beer",it:"Birre",de:"Bier",es:"Cervezas"},
+    title:{fr:"Bières Bouteille",en:"Bottled Beer",it:"Birre in Bottiglia",de:"Flaschenbier",es:"Cervezas"},
+    items:[ {n:"Pietra 33 cl",p:"5,00 €"} ]
+  },
+  {
+    id:"cocktails",compact:true,
+    nav:{fr:"Cocktails",en:"Cocktails",it:"Cocktail",de:"Cocktails",es:"Cócteles"},
+    title:{fr:"Cocktails",en:"Cocktails",it:"Cocktail",de:"Cocktails",es:"Cócteles"},
+    items:[
+      {n:"Italiscus Spritz",p:"12,00 €"},
+      {n:"Aperol Spritz",p:"9,00 €"},
+      {n:"Sarti Spritz",p:"10,00 €"},
+      {n:"Limon Spritz",p:"9,00 €"}
+    ]
+  },
+  {
+    id:"eaux",compact:true,
+    nav:{fr:"Eaux",en:"Water",it:"Acque",de:"Wasser",es:"Aguas"},
+    title:{fr:"Eaux",en:"Water",it:"Acque",de:"Wasser",es:"Aguas"},
+    items:[
+      {n:"Zilia 50 cl",p:"3,00 €",d:{fr:"1 L — 5,50 €",en:"1 L — 5,50 €",it:"1 L — 5,50 €",de:"1 L — 5,50 €",es:"1 L — 5,50 €"}},
+      {n:"Orezza 33 cl",p:"3,00 €",d:{fr:"1 L — 5,50 €",en:"1 L — 5,50 €",it:"1 L — 5,50 €",de:"1 L — 5,50 €",es:"1 L — 5,50 €"}}
+    ]
+  }
+];
+
+let currentLang = "fr";
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function render(lang){
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll("#langbar button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.lang===lang);
+  });
+  const nav = document.getElementById("nav");
+  nav.innerHTML = '<a href="#top">↑</a>' + SECTIONS.map(s=>`<a href="#${s.id}">${esc(t(s.nav,lang))}</a>`).join("");
+  const menu = document.getElementById("menu");
+  let html = '<span id="top"></span>';
+  for(const s of SECTIONS){
+    html += `<section id="${s.id}">`;
+    html += `<div class="sec-title">${esc(t(s.title,lang))}</div>`;
+    if(s.sub) html += `<div class="sec-sub">${esc(t(s.sub,lang))}</div>`;
+    if(s.cards){
+      html += `<div class="compose-price">${esc(s.price)}</div><div class="compose-grid">`;
+      for(const c of s.cards){ html += `<div class="compose-card"><h3>${esc(t(c.h,lang))}</h3><p>${esc(t(c.p,lang))}</p></div>`; }
+      html += `</div>`;
+    } else {
+      html += s.compact ? '<div class="compact">' : '';
+      for(const it of s.items){
+        html += `<div class="item"><div class="item-row"><span class="item-name">${esc(t(it.n,lang))}</span><span class="item-price">${esc(it.p)}</span></div>`;
+        if(it.d) html += `<div class="item-desc">${esc(t(it.d,lang))}</div>`;
+        html += `</div>`;
+      }
+      html += s.compact ? '</div>' : '';
+    }
+    html += `</section>`;
+  }
+  html += `<a href="#top" class="top-link">${esc(t(UI.backTop,lang))}</a>`;
+  menu.innerHTML = html;
+  document.getElementById("footer-note").textContent = t(UI.footer,lang);
+}
+
+const langbar = document.getElementById("langbar");
+langbar.innerHTML = LANGS.map(l=>`<button data-lang="${l.code}"><span class="flag">${l.flag}</span>${l.label}</button>`).join("");
+langbar.querySelectorAll("button").forEach(b=>{ b.addEventListener("click",()=>render(b.dataset.lang)); });
+
+const supported = LANGS.map(l=>l.code);
+const nav0 = (navigator.language||"fr").slice(0,2).toLowerCase();
+render(supported.includes(nav0) ? nav0 : "fr");
+</script>
+
+</body>
+</html>
