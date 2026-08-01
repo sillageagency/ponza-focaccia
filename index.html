@@ -53,6 +53,18 @@
   footer .big{font-family:'Pacifico',cursive;color:var(--green);font-size:1.8rem;transform:rotate(-3deg);display:inline-block;}
   footer p{margin-top:10px;font-size:.8rem;}
 
+
+  /* ---------- Numeros des ingredients (compose) ---------- */
+  .compose-hint{background:var(--green);color:var(--cream);border-radius:12px;padding:11px 14px;
+    font-size:.86rem;line-height:1.45;margin:-4px 0 14px;}
+  .compose-hint b{font-weight:700;}
+  .ing-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .ing{display:inline-flex;align-items:center;gap:6px;background:#fff;
+    border:1px solid rgba(15,92,46,.18);border-radius:9px;padding:5px 9px;font-size:.85rem;color:var(--ink);}
+  .ing b{background:var(--green);color:var(--cream);border-radius:5px;padding:1px 6px;
+    font-size:.74rem;font-weight:700;letter-spacing:.4px;font-variant-numeric:tabular-nums;}
+  .ing i{font-style:normal;color:var(--green);font-weight:600;font-size:.78rem;}
+
   /* ---------- Photos des produits ---------- */
   .item.has-photo{display:flex;gap:12px;align-items:flex-start;}
   .item-thumb{width:80px;height:80px;flex:0 0 80px;border-radius:10px;object-fit:cover;
@@ -255,53 +267,13 @@ const SECTIONS = [
     title:{fr:"Compose ta Focaccia !",en:"Build Your Own Focaccia!",it:"Componi la tua Focaccia!",de:"Stelle deine Focaccia zusammen!",es:"¡Crea tu Focaccia!",
            ru:"Собери свою фокаччу!",ja:"オリジナルフォカッチャを作ろう！",zh:"自选你的佛卡夏！"},
     price:"14,90 €",
+    hint:{fr:"Indiquez simplement les numéros à notre équipe.",en:"Just tell our team the numbers.",it:"Basta indicare i numeri al nostro personale.",de:"Nennen Sie unserem Team einfach die Nummern.",es:"Solo indique los números a nuestro equipo.",ru:"Просто назовите номера нашему персоналу.",ja:"番号をスタッフにお伝えください。",zh:"只需将编号告诉我们的员工。"},
     cards:[
-      {h:{fr:"1 Crème",en:"1 Cream",it:"1 Crema",de:"1 Creme",es:"1 Crema",ru:"1 крем на выбор",ja:"クリーム 1種",zh:"1 种酱料"},
-       p:{fr:"Pesto · Pesto rosso · Pesto de pistache · Crème d'artichauts · Crème de truffe (+1 €) · Nduja",
-          en:"Pesto · Red pesto · Pistachio pesto · Artichoke cream · Truffle cream (+1 €) · Nduja",
-          it:"Pesto · Pesto rosso · Pesto di pistacchio · Crema di carciofi · Crema di tartufo (+1 €) · Nduja",
-          de:"Pesto · Rotes Pesto · Pistazienpesto · Artischockencreme · Trüffelcreme (+1 €) · Nduja",
-          es:"Pesto · Pesto rojo · Pesto de pistacho · Crema de alcachofa · Crema de trufa (+1 €) · Nduja",
-          ru:"Песто · Красное песто · Песто из фисташек · Крем из артишоков · Трюфельный крем (+1 €) · Ндуйя",
-          ja:"ペスト · 赤ペスト · ピスタチオペースト · アーティチョーククリーム · トリュフクリーム（+1 €） · ンドゥイヤ",
-          zh:"罗勒青酱 · 红罗勒酱 · 开心果酱 · 朝鲜蓟酱 · 松露酱（+1 €） · 恩杜亚辣香肠"}},
-      {h:{fr:"1 Charcuterie",en:"1 Cured meat",it:"1 Salume",de:"1 Wurst / Schinken",es:"1 Embutido",ru:"1 мясная нарезка",ja:"ハム・サラミ 1種",zh:"1 种肉类"},
-       p:{fr:"Jambon cuit · Jambon cru · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bressaola (+1 €)",
-          en:"Cooked ham · Cured ham · Mortadella · Porchetta · Coppa · Spianata · Bresaola (+1 €) · Nduja",
-          it:"Prosciutto cotto · Prosciutto crudo · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",
-          de:"Kochschinken · Rohschinken · Mortadella · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",
-          es:"Jamón cocido · Jamón curado · Mortadela · Porchetta · Coppa · Spianata · Nduja · Bresaola (+1 €)",
-          ru:"Варёный окорок · Сыровяленый окорок · Мортаделла · Порчетта · Коппа · Спьяната · Ндуйя · Брезаола (+1 €)",
-          ja:"ハム · 生ハム · モルタデッラ · ポルケッタ · コッパ · スピアナータ · ンドゥイヤ · ブレザオラ（+1 €）",
-          zh:"熟火腿 · 生火腿 · 摩泰台拉香肠 · 意式烤猪肉卷 · 科帕火腿 · 斯皮亚纳塔萨拉米 · 恩杜亚辣香肠 · 风干牛肉（+1 €）"}},
-      {h:{fr:"1 Fromage",en:"1 Cheese",it:"1 Formaggio",de:"1 Käse",es:"1 Queso",ru:"1 сыр",ja:"チーズ 1種",zh:"1 种奶酪"},
-       p:{fr:"Stracciatella · Mozzarella di buffala · Provolone · Taleggio · Scarmozza",
-          en:"Stracciatella · Buffalo mozzarella · Provolone · Taleggio · Scamorza",
-          it:"Stracciatella · Mozzarella di bufala · Provolone · Taleggio · Scamorza",
-          de:"Stracciatella · Büffelmozzarella · Provolone · Taleggio · Scamorza",
-          es:"Stracciatella · Mozzarella de búfala · Provolone · Taleggio · Scamorza",
-          ru:"Страчателла · Моцарелла из молока буйволицы · Проволоне · Таледжо · Скаморца",
-          ja:"ストラッチャテッラ · 水牛モッツァレラ · プロヴォローネ · タレッジョ · スカモルツァ",
-          zh:"斯特拉奇亚泰拉奶酪 · 水牛马苏里拉 · 波萝伏洛奶酪 · 塔雷吉欧奶酪 · 斯卡摩扎奶酪"}},
-      {h:{fr:"1 Légume",en:"1 Vegetable",it:"1 Verdura",de:"1 Gemüse",es:"1 Verdura",ru:"1 овощ",ja:"野菜 1種",zh:"1 种蔬菜"},
-       p:{fr:"Aubergines confites · Courgettes confites · Poivrons grillés · Tomates confites · Tomates fraîches",
-          en:"Candied aubergines · Candied courgettes · Grilled peppers · Candied tomatoes · Fresh tomatoes",
-          it:"Melanzane confit · Zucchine confit · Peperoni grigliati · Pomodori confit · Pomodori freschi",
-          de:"Kandierte Auberginen · Kandierte Zucchini · Gegrillte Paprika · Kandierte Tomaten · Frische Tomaten",
-          es:"Berenjenas confitadas · Calabacines confitados · Pimientos asados · Tomates confitados · Tomates frescos",
-          ru:"Баклажаны конфи · Кабачки конфи · Жареный перец · Томаты конфи · Свежие томаты",
-          ja:"ナスのコンフィ · ズッキーニのコンフィ · 焼きパプリカ · トマトのコンフィ · フレッシュトマト",
-          zh:"油封茄子 · 油封西葫芦 · 烤甜椒 · 油封番茄 · 新鲜番茄"}},
-      {h:{fr:"Condiments inclus",en:"Included toppings",it:"Condimenti inclusi",de:"Inklusive Beilagen",es:"Condimentos incluidos",
-          ru:"Входит в состав",ja:"付属のトッピング",zh:"已含配料"},
-       p:{fr:"Basilic · Roquette · Éclats de pistaches · Éclats de noisettes · Crème balsamique",
-          en:"Basil · Rocket · Pistachio pieces · Hazelnut pieces · Balsamic cream",
-          it:"Basilico · Rucola · Granella di pistacchio · Granella di nocciole · Crema di balsamico",
-          de:"Basilikum · Rucola · Pistazienstückchen · Haselnussstückchen · Balsamico-Creme",
-          es:"Albahaca · Rúcula · Trocitos de pistacho · Trocitos de avellana · Crema de balsámico",
-          ru:"Базилик · Руккола · Кусочки фисташек · Кусочки лесного ореха · Бальзамический крем",
-          ja:"バジル · ルッコラ · 砕きピスタチオ · 砕きヘーゼルナッツ · バルサミコクリーム",
-          zh:"罗勒 · 芝麻菜 · 开心果碎 · 榛子碎 · 香醋酱"}}
+      {h:{fr:"1 Crème",en:"1 Cream",it:"1 Crema",de:"1 Creme",es:"1 Crema",ru:"1 крем на выбор",ja:"クリーム 1種",zh:"1 种酱料"}, items:[{num:"01",n:{fr:"Pesto",en:"Pesto",it:"Pesto",de:"Pesto",es:"Pesto",ru:"Песто",ja:"ペスト",zh:"罗勒青酱"}},{num:"02",n:{fr:"Pesto rosso",en:"Red pesto",it:"Pesto rosso",de:"Rotes Pesto",es:"Pesto rojo",ru:"Красное песто",ja:"赤ペスト",zh:"红罗勒酱"}},{num:"03",n:{fr:"Pesto de pistache",en:"Pistachio pesto",it:"Pesto di pistacchio",de:"Pistazienpesto",es:"Pesto de pistacho",ru:"Песто из фисташек",ja:"ピスタチオペースト",zh:"开心果酱"}},{num:"04",n:{fr:"Crème d\'artichauts",en:"Artichoke cream",it:"Crema di carciofi",de:"Artischockencreme",es:"Crema de alcachofa",ru:"Крем из артишоков",ja:"アーティチョーククリーム",zh:"朝鲜蓟酱"}},{num:"05",n:{fr:"Crème de truffe",en:"Truffle cream",it:"Crema di tartufo",de:"Trüffelcreme",es:"Crema de trufa",ru:"Трюфельный крем",ja:"トリュフクリーム",zh:"松露酱"},supp:1},{num:"06",n:{fr:"Nduja",en:"Nduja",it:"Nduja",de:"Nduja",es:"Nduja",ru:"Ндуйя",ja:"ンドゥイヤ",zh:"恩杜亚辣香肠"}}]},
+      {h:{fr:"1 Charcuterie",en:"1 Cured meat",it:"1 Salume",de:"1 Wurst / Schinken",es:"1 Embutido",ru:"1 мясная нарезка",ja:"ハム・サラミ 1種",zh:"1 种肉类"}, items:[{num:"11",n:{fr:"Jambon cuit",en:"Cooked ham",it:"Prosciutto cotto",de:"Kochschinken",es:"Jamón cocido",ru:"Варёный окорок",ja:"ハム",zh:"熟火腿"}},{num:"12",n:{fr:"Jambon cru",en:"Cured ham",it:"Prosciutto crudo",de:"Rohschinken",es:"Jamón curado",ru:"Сыровяленый окорок",ja:"生ハム",zh:"生火腿"}},{num:"13",n:{fr:"Mortadella",en:"Mortadella",it:"Mortadella",de:"Mortadella",es:"Mortadela",ru:"Мортаделла",ja:"モルタデッラ",zh:"摩泰台拉香肠"}},{num:"14",n:{fr:"Porchetta",en:"Porchetta",it:"Porchetta",de:"Porchetta",es:"Porchetta",ru:"Порчетта",ja:"ポルケッタ",zh:"意式烤猪肉卷"}},{num:"15",n:{fr:"Coppa",en:"Coppa",it:"Coppa",de:"Coppa",es:"Coppa",ru:"Коппа",ja:"コッパ",zh:"科帕火腿"}},{num:"16",n:{fr:"Spianata",en:"Spianata",it:"Spianata",de:"Spianata",es:"Spianata",ru:"Спьяната",ja:"スピアナータ",zh:"斯皮亚纳塔萨拉米"}},{num:"17",n:{fr:"Nduja",en:"Nduja",it:"Nduja",de:"Nduja",es:"Nduja",ru:"Ндуйя",ja:"ンドゥイヤ",zh:"恩杜亚辣香肠"}},{num:"18",n:{fr:"Bressaola",en:"Bresaola",it:"Bresaola",de:"Bresaola",es:"Bresaola",ru:"Брезаола",ja:"ブレザオラ",zh:"风干牛肉"},supp:1}]},
+      {h:{fr:"1 Fromage",en:"1 Cheese",it:"1 Formaggio",de:"1 Käse",es:"1 Queso",ru:"1 сыр",ja:"チーズ 1種",zh:"1 种奶酪"}, items:[{num:"21",n:{fr:"Stracciatella",en:"Stracciatella",it:"Stracciatella",de:"Stracciatella",es:"Stracciatella",ru:"Страчателла",ja:"ストラッチャテッラ",zh:"斯特拉奇亚泰拉奶酪"}},{num:"22",n:{fr:"Mozzarella di buffala",en:"Buffalo mozzarella",it:"Mozzarella di bufala",de:"Büffelmozzarella",es:"Mozzarella de búfala",ru:"Моцарелла из молока буйволицы",ja:"水牛モッツァレラ",zh:"水牛马苏里拉"}},{num:"23",n:{fr:"Provolone",en:"Provolone",it:"Provolone",de:"Provolone",es:"Provolone",ru:"Проволоне",ja:"プロヴォローネ",zh:"波萝伏洛奶酪"}},{num:"24",n:{fr:"Taleggio",en:"Taleggio",it:"Taleggio",de:"Taleggio",es:"Taleggio",ru:"Таледжо",ja:"タレッジョ",zh:"塔雷吉欧奶酪"}},{num:"25",n:{fr:"Scarmozza",en:"Scamorza",it:"Scamorza",de:"Scamorza",es:"Scamorza",ru:"Скаморца",ja:"スカモルツァ",zh:"斯卡摩扎奶酪"}}]},
+      {h:{fr:"1 Légume",en:"1 Vegetable",it:"1 Verdura",de:"1 Gemüse",es:"1 Verdura",ru:"1 овощ",ja:"野菜 1種",zh:"1 种蔬菜"}, items:[{num:"31",n:{fr:"Aubergines confites",en:"Candied aubergines",it:"Melanzane confit",de:"Kandierte Auberginen",es:"Berenjenas confitadas",ru:"Баклажаны конфи",ja:"ナスのコンフィ",zh:"油封茄子"}},{num:"32",n:{fr:"Courgettes confites",en:"Candied courgettes",it:"Zucchine confit",de:"Kandierte Zucchini",es:"Calabacines confitados",ru:"Кабачки конфи",ja:"ズッキーニのコンフィ",zh:"油封西葫芦"}},{num:"33",n:{fr:"Poivrons grillés",en:"Grilled peppers",it:"Peperoni grigliati",de:"Gegrillte Paprika",es:"Pimientos asados",ru:"Жареный перец",ja:"焼きパプリカ",zh:"烤甜椒"}},{num:"34",n:{fr:"Tomates confites",en:"Candied tomatoes",it:"Pomodori confit",de:"Kandierte Tomaten",es:"Tomates confitados",ru:"Томаты конфи",ja:"トマトのコンフィ",zh:"油封番茄"}},{num:"35",n:{fr:"Tomates fraîches",en:"Fresh tomatoes",it:"Pomodori freschi",de:"Frische Tomaten",es:"Tomates frescos",ru:"Свежие томаты",ja:"フレッシュトマト",zh:"新鲜番茄"}}]},
+      {h:{fr:"Condiments inclus",en:"Included toppings",it:"Condimenti inclusi",de:"Inklusive Beilagen",es:"Condimentos incluidos",ru:"Входит в состав",ja:"付属のトッピング",zh:"已含配料"}, items:[{num:"41",n:{fr:"Basilic",en:"Basil",it:"Basilico",de:"Basilikum",es:"Albahaca",ru:"Базилик",ja:"バジル",zh:"罗勒"}},{num:"42",n:{fr:"Roquette",en:"Rocket",it:"Rucola",de:"Rucola",es:"Rúcula",ru:"Руккола",ja:"ルッコラ",zh:"芝麻菜"}},{num:"43",n:{fr:"Éclats de pistaches",en:"Pistachio pieces",it:"Granella di pistacchio",de:"Pistazienstückchen",es:"Trocitos de pistacho",ru:"Кусочки фисташек",ja:"砕きピスタチオ",zh:"开心果碎"}},{num:"44",n:{fr:"Éclats de noisettes",en:"Hazelnut pieces",it:"Granella di nocciole",de:"Haselnussstückchen",es:"Trocitos de avellana",ru:"Кусочки лесного ореха",ja:"砕きヘーゼルナッツ",zh:"榛子碎"}},{num:"45",n:{fr:"Crème balsamique",en:"Balsamic cream",it:"Crema di balsamico",de:"Balsamico-Creme",es:"Crema de balsámico",ru:"Бальзамический крем",ja:"バルサミコクリーム",zh:"香醋酱"}}]}
     ]
   },
   {
@@ -465,8 +437,16 @@ function render(lang){
     html += `<div class="sec-title">${esc(t(s.title,lang))}</div>`;
     if(s.sub) html += `<div class="sec-sub">${esc(t(s.sub,lang))}</div>`;
     if(s.cards){
-      html += `<div class="compose-price">${esc(s.price)}</div><div class="compose-grid">`;
-      for(const c of s.cards){ html += `<div class="compose-card"><h3>${esc(t(c.h,lang))}</h3><p>${esc(t(c.p,lang))}</p></div>`; }
+      html += `<div class="compose-price">${esc(s.price)}</div>`;
+      if(s.hint) html += `<div class="compose-hint">${esc(t(s.hint,lang))}</div>`;
+      html += `<div class="compose-grid">`;
+      for(const c of s.cards){
+        html += `<div class="compose-card"><h3>${esc(t(c.h,lang))}</h3><div class="ing-list">`;
+        for(const it of c.items){
+          html += `<span class="ing"><b>${it.num}</b>${esc(t(it.n,lang))}${it.supp?' <i>+1 €</i>':''}</span>`;
+        }
+        html += `</div></div>`;
+      }
       html += `</div>`;
     } else {
       if(s.id === "soft") html += signatureBlock(lang);
